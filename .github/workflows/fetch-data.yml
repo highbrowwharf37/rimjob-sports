@@ -1,0 +1,25 @@
+name: Fetch CBB Data
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch Barttorvik data
+        run: |
+          curl -o teams_raw.json "https://barttorvik.com/2026_team_results.json" -H "User-Agent: Mozilla/5.0"
+          curl -o players_raw.json "https://barttorvik.com/playerstat.php?year=2026&json=1&minmin=150" -H "User-Agent: Mozilla/5.0"
+          python3 merge.py
+
+      - name: Commit data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data.json
+          git commit -m "Update CBB data" || echo "No changes"
+          git push
