@@ -72,9 +72,10 @@ td { padding: 10px 12px; font-size: 13px; white-space: nowrap; }
 .stat-card-value { font-family: var(--font-serif); font-size: 24px; font-weight: 600; letter-spacing: -1px; }
 .stat-card-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); display: block; text-transform: none; letter-spacing: 0; }
-.tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--text-muted); }
-.tooltip:hover::after { content: attr(data-tip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: var(--text-primary); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 999; pointer-events: none; }
-.tooltip:hover::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--text-primary); z-index: 999; }
+.has-tip { position: relative; cursor: help; }
+.has-tip .th-tip { display: none; }
+.has-tip:hover::after { content: attr(data-tip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: var(--text-primary); color: white; padding: 6px 10px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 999; pointer-events: none; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.has-tip:hover::before { content: ''; position: absolute; bottom: 106%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--text-primary); z-index: 999; }
 .loading-bar { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 40px; text-align: center; color: var(--text-muted); }
 .spinner { width: 26px; height: 26px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -421,11 +422,11 @@ function renderPower() {
     <thead><tr>
       <th class="sorted">Rk</th><th>Team</th><th>Conf</th>
       <th class="num">Record</th>
-      <th class="num">Barthag <span class="th-tip">Win prob vs avg D1</span></th>
-      <th class="num">Net EM <span class="th-tip">Adj Off − Adj Def</span></th>
+      <th class="num has-tip" data-tip="Win prob vs avg D1">Barthag</th>
+      <th class="num has-tip" data-tip="Adj Off − Adj Def">Net EM</th>
       <th class="num">Adj OE</th><th class="num">Adj DE</th>
       <th class="num">Tempo</th>
-      <th class="num">WAB <span class="th-tip">Wins above bubble</span></th>
+      <th class="num has-tip" data-tip="Wins above bubble">WAB</th>
     </tr></thead><tbody>`;
   teams.forEach((t,i) => {
     const p = pct(t.netEM, minEM, maxEM);
@@ -543,9 +544,9 @@ function renderSOS() {
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th class="sorted">SOS Rk</th><th>Team</th><th>Conf</th>
-      <th class="num">Opp Avg OE <span class="th-tip">Higher = tougher schedule</span></th>
-      <th class="num">Opp Avg DE <span class="th-tip">Lower = tougher schedule</span></th>
-      <th class="num">Loss Quality <span class="th-tip">How bad are their losses? Lower = better</span></th>
+      <th class="num has-tip" data-tip="Higher = tougher schedule">Opp Avg OE</th>
+      <th class="num has-tip" data-tip="Lower = tougher schedule">Opp Avg DE</th>
+      <th class="num has-tip" data-tip="How bad are their losses? Lower = better">Loss Quality</th>
       <th class="num">Adj OE</th><th class="num">Adj DE</th>
       <th class="num">Record</th><th class="num">WAB</th>
     </tr></thead><tbody>`;
@@ -679,7 +680,7 @@ function renderMomentum() {
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Rk</th><th>Team</th><th>Conf</th>
-      <th class="num">Momentum <span class="th-tip">Actual win% vs expected</span></th>
+      <th class="num has-tip" data-tip="Actual win% vs expected">Momentum</th>
       <th class="num">Actual W%</th><th class="num">Expected W%</th>
       <th class="num">Record</th><th class="num">Barthag</th>
     </tr></thead><tbody>`;
@@ -787,7 +788,7 @@ function renderUpset() {
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Underdog</th><th>vs Favorite</th>
-      <th class="num">Upset Prob <span class="th-tip">Underdog win chance</span></th>
+      <th class="num has-tip" data-tip="Underdog win chance">Upset Prob</th>
       <th class="num">Underdog Barthag</th>
       <th class="num">Favorite Barthag</th>
       <th class="num">Underdog Record</th>
@@ -829,7 +830,7 @@ function renderConfStrength() {
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th class="sorted">Rk</th><th>Conference</th><th class="num">Teams</th>
-      <th class="num">Avg Barthag <span class="th-tip">Avg win prob vs D1</span></th>
+      <th class="num has-tip" data-tip="Avg win prob vs D1">Avg Barthag</th>
       <th class="num">Avg Net EM</th>
       <th>Best Team</th>
       <th class="num">Best Barthag</th>
@@ -921,12 +922,12 @@ function renderCinderella() {
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Rk</th><th>Team</th><th>Conf</th>
-      <th class="num">Proj Seed <span class="th-tip">Estimated NCAA seed</span></th>
-      <th class="num">True Rank <span class="th-tip">Actual strength rank</span></th>
-      <th class="num">Cinderella Score <span class="th-tip">Composite upset potential</span></th>
-      <th class="num">KenPom Est. <span class="th-tip">Net efficiency (KenPom-style)</span></th>
-      <th class="num">Adj DE <span class="th-tip">Defensive efficiency rank</span></th>
-      <th class="num">Barthag <span class="th-tip">Win prob vs avg D1</span></th>
+      <th class="num has-tip" data-tip="Estimated NCAA seed">Proj Seed</th>
+      <th class="num has-tip" data-tip="Actual strength rank">True Rank</th>
+      <th class="num has-tip" data-tip="Composite upset potential">Cinderella Score</th>
+      <th class="num has-tip" data-tip="Net efficiency (KenPom-style)">KenPom Est.</th>
+      <th class="num has-tip" data-tip="Defensive efficiency rank">Adj DE</th>
+      <th class="num has-tip" data-tip="Win prob vs avg D1">Barthag</th>
       <th class="num">Tempo</th>
       <th class="num">WAB</th>
       <th class="num">Record</th>
