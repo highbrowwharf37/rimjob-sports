@@ -609,20 +609,71 @@ function runPredictor() {
           <div class="result-label">${!aWins?'FAVORED':'UNDERDOG'}</div>
         </div>
       </div>
-      <div class="prob-bar"><div class="prob-bar-fill" style="width:${pctA}%"></div></div>
-      <div class="matchup-grid">
-        <div class="matchup-row"><div class="matchup-label">Adj Offense</div>
-          <div class="matchup-vals"><span class="${a.adjOE>b.adjOE?'better':'worse'}">${a.adjOE.toFixed(1)}</span><span class="${b.adjOE>a.adjOE?'better':'worse'}">${b.adjOE.toFixed(1)}</span></div></div>
-        <div class="matchup-row"><div class="matchup-label">Adj Defense</div>
-          <div class="matchup-vals"><span class="${a.adjDE<b.adjDE?'better':'worse'}">${a.adjDE.toFixed(1)}</span><span class="${b.adjDE<a.adjDE?'better':'worse'}">${b.adjDE.toFixed(1)}</span></div></div>
-        <div class="matchup-row"><div class="matchup-label">Tempo</div>
-          <div class="matchup-vals"><span>${a.adjT.toFixed(1)}</span><span>${b.adjT.toFixed(1)}</span></div></div>
-        <div class="matchup-row"><div class="matchup-label">Projected Score</div>
-          <div class="matchup-vals"><span>${scoreA}</span><span>${scoreB}</span></div></div>
-        <div class="matchup-row"><div class="matchup-label">Record</div>
-          <div class="matchup-vals"><span>${a.record}</span><span>${b.record}</span></div></div>
-        <div class="matchup-row"><div class="matchup-label">WAB</div>
-          <div class="matchup-vals"><span class="${a.wab>=0?'better':'worse'}">${a.wab>=0?'+':''}${a.wab.toFixed(1)}</span><span class="${b.wab>=0?'better':'worse'}">${b.wab>=0?'+':''}${b.wab.toFixed(1)}</span></div></div>
+
+      <!-- Win probability bar -->
+      <div style="margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px">
+          <span style="color:var(--blue)">${a.name}</span>
+          <span style="color:var(--text-muted)">Win Probability</span>
+          <span style="color:var(--accent)">${b.name}</span>
+        </div>
+        <div style="height:28px;border-radius:4px;background:var(--accent);overflow:hidden;position:relative">
+          <div style="height:100%;background:var(--blue);width:${pctA}%;border-radius:4px;transition:width 0.7s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px">
+            <span style="color:white;font-size:12px;font-weight:700">${pctA}%</span>
+          </div>
+          <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:white;font-size:12px;font-weight:700">${pctB}%</span>
+        </div>
+      </div>
+
+      <!-- Projected score -->
+      <div style="text-align:center;background:var(--bg);border-radius:6px;padding:14px;margin-bottom:20px">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);font-weight:700;margin-bottom:8px">Projected Score</div>
+        <div style="font-family:var(--font-serif);font-size:32px;font-weight:600;letter-spacing:-1px">
+          <span style="color:var(--blue)">${a.name} ${scoreA}</span>
+          <span style="color:var(--text-muted);font-size:20px;margin:0 10px">—</span>
+          <span style="color:var(--accent)">${b.name} ${scoreB}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Based on avg tempo of ${avgPoss.toFixed(1)} possessions</div>
+      </div>
+
+      <!-- Stat comparison bars -->
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);margin-bottom:12px">Head-to-Head Stat Comparison</div>
+      ${[
+        {label:'Adj Offense', av:a.adjOE, bv:b.adjOE, higherBetter:true, fmt:v=>v.toFixed(1)},
+        {label:'Adj Defense', av:a.adjDE, bv:b.adjDE, higherBetter:false, fmt:v=>v.toFixed(1)},
+        {label:'Net Efficiency', av:a.netEM, bv:b.netEM, higherBetter:true, fmt:v=>(v>=0?'+':'')+v.toFixed(1)},
+        {label:'Tempo', av:a.adjT, bv:b.adjT, higherBetter:null, fmt:v=>v.toFixed(1)},
+        {label:'Win Prob (Barthag)', av:a.barthag*100, bv:b.barthag*100, higherBetter:true, fmt:v=>v.toFixed(1)+'%'},
+        {label:'WAB', av:a.wab, bv:b.wab, higherBetter:true, fmt:v=>(v>=0?'+':'')+v.toFixed(1)},
+      ].map(m => {
+        const maxV = Math.max(Math.abs(m.av), Math.abs(m.bv), 0.1);
+        const pA = Math.min(100, (Math.abs(m.av) / maxV) * 100);
+        const pB = Math.min(100, (Math.abs(m.bv) / maxV) * 100);
+        const aWinsMetric = m.higherBetter === null ? false : m.higherBetter ? m.av > m.bv : m.av < m.bv;
+        const bWinsMetric = m.higherBetter === null ? false : !aWinsMetric && m.av !== m.bv;
+        return `<div style="display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+            <span style="font-size:12px;font-weight:700;color:${aWinsMetric?'var(--blue)':'var(--text-secondary)'}">${m.fmt(m.av)}</span>
+            <div style="height:8px;border-radius:2px;background:var(--blue);width:${pA}px;max-width:80px;opacity:${aWinsMetric?1:0.4}"></div>
+          </div>
+          <div style="text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:var(--text-muted)">${m.label}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="height:8px;border-radius:2px;background:var(--accent);width:${pB}px;max-width:80px;opacity:${bWinsMetric?1:0.4}"></div>
+            <span style="font-size:12px;font-weight:700;color:${bWinsMetric?'var(--accent)':'var(--text-secondary)'}">${m.fmt(m.bv)}</span>
+          </div>
+        </div>`;
+      }).join('')}
+
+      <!-- Record -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <div style="background:var(--blue-light);border-radius:4px;padding:10px 14px;text-align:center">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.4px;color:var(--blue);font-weight:700;margin-bottom:3px">${a.name} Record</div>
+          <div style="font-size:18px;font-weight:700;color:var(--blue)">${a.record}</div>
+        </div>
+        <div style="background:var(--accent-light);border-radius:4px;padding:10px 14px;text-align:center">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.4px;color:var(--accent);font-weight:700;margin-bottom:3px">${b.name} Record</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">${b.record}</div>
+        </div>
       </div>
     </div>`;
 }
