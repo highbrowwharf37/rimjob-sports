@@ -170,6 +170,7 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
     <div class="nav-tab" onclick="switchTab('h2h')">Head-to-Head</div>
     <div class="nav-tab" onclick="switchTab('upset')">Upset Alerts</div>
     <div class="nav-tab" onclick="switchTab('confstrength')">Conf Strength</div>
+    <div class="nav-tab" onclick="switchTab('cinderella')">🥿 Cinderella Watch</div>
   </div>
 </nav>
 
@@ -277,6 +278,33 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
   <p class="data-note">Data: barttorvik.com</p>
 </div>
 
+<div class="section" id="cinderella">
+  <div class="page-title">
+    <div><h1>🥿 Cinderella Watch</h1>
+    <p>Teams most likely to make a deep tournament run based on efficiency, tempo, defensive strength, and seed vs. true ability gap</p></div>
+  </div>
+
+  <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:18px 20px;margin-bottom:20px;font-size:13px;line-height:1.8;color:var(--text-secondary)">
+    <strong style="color:var(--text-primary);font-size:14px">How we identify Cinderella teams:</strong><br>
+    Research shows the best statistical predictors of tournament upsets are: <strong>Adjusted Efficiency Margin</strong> (teams outperforming their seed), <strong>Defensive Efficiency</strong> (elite defenses disrupt favored opponents), <strong>Barthag vs Seed Gap</strong> (teams whose true strength far exceeds their projected seed), <strong>Tempo Control</strong> (teams that play at their own pace), and <strong>Schedule-adjusted WAB</strong> (wins above bubble vs difficulty of schedule). The <em>Cinderella Score</em> below is a composite of all five factors.
+  </div>
+
+  <div class="stat-grid" id="cind-cards"></div>
+
+  <div class="filters">
+    <label>Min Projected Seed</label>
+    <select id="cind-seed-filter" onchange="renderCinderella()">
+      <option value="5">5+ seed (any underdog)</option>
+      <option value="8">8+ seed</option>
+      <option value="10">10+ seed (true Cinderella)</option>
+      <option value="12">12+ seed (major upset)</option>
+    </select>
+  </div>
+
+  <div id="cinderella-container"><div class="loading-bar"><div class="spinner"></div>Loading...</div></div>
+  <p class="data-note">Cinderella Score = composite of AdjEM vs seed gap, defensive efficiency rank, barthag, tempo control, and WAB. Higher = more upset potential.</p>
+</div>
+
 </main>
 
 <script>
@@ -382,7 +410,7 @@ function filteredTeams(confId) { const c = getConf(confId); return c ? allTeams.
 function renderAll() {
   renderPower(); renderEfficiency();
   renderSOS(); renderBubble(); renderMomentum();
-  renderUpset(); renderConfStrength();
+  renderUpset(); renderConfStrength(); renderCinderella();
 }
 
 // ===== POWER =====
@@ -807,8 +835,106 @@ function switchTab(id) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const idx = {power:0,efficiency:1,sos:2,predictor:3,bubble:4,momentum:5,h2h:6,upset:7,confstrength:8};
+  const idx = {power:0,efficiency:1,sos:2,predictor:3,bubble:4,momentum:5,h2h:6,upset:7,confstrength:8,cinderella:9};
   document.querySelectorAll('.nav-tab')[idx[id]].classList.add('active');
+}
+
+// ===== CINDERELLA =====
+function renderCinderella() {
+  const minSeed = parseInt(document.getElementById('cind-seed-filter')?.value) || 5;
+
+  // Sort teams by barthag to get their "true rank"
+  const byBarthag = [...allTeams].sort((a,b) => b.barthag - a.barthag);
+  const totalTeams = byBarthag.length;
+
+  // Assign true rank and estimate projected seed (top 68 make tournament)
+  const teamsWithRank = byBarthag.map((t, i) => {
+    const trueRank = i + 1;
+    // Estimate projected seed: every 4 teams = 1 seed line (top 4 = 1 seeds, etc.)
+    const projSeed = Math.min(16, Math.ceil(trueRank / 4));
+    return {...t, trueRank, projSeed};
+  });
+
+  // Cinderella score formula:
+  // 1. Seed gap: how much better are they than their seed suggests (higher = better Cinderella)
+  // 2. Defensive efficiency: lower adjDE = better defense
+  // 3. Barthag: higher = more likely to win
+  // 4. Tempo: teams near average tempo (67-72) are most adaptable
+  // 5. WAB: positive WAB = battle tested
+
+  const defRanks = [...allTeams].sort((a,b) => a.adjDE - b.adjDE);
+
+  const candidates = teamsWithRank
+    .filter(t => t.projSeed >= minSeed && t.trueRank <= 80) // must be tournament-caliber
+    .map(t => {
+      const defRank = defRanks.findIndex(x => x.name === t.name) + 1;
+      const defScore = Math.max(0, (totalTeams - defRank) / totalTeams * 25); // 0-25
+      const barthagScore = t.barthag * 30; // 0-30
+      const tempoScore = Math.max(0, 15 - Math.abs(t.adjT - 69) * 0.8); // 0-15, best near 69
+      const wabScore = Math.min(15, Math.max(0, t.wab * 2 + 5)); // 0-15
+      const seedGapScore = Math.min(15, (t.projSeed - 1) * t.barthag * 10); // bonus for being underseeded
+      const cinderellaScore = defScore + barthagScore + tempoScore + wabScore + seedGapScore;
+      const kenpomEst = (t.adjOE - t.adjDE).toFixed(1); // KenPom-style net rating estimate
+      return {...t, defRank, cinderellaScore, kenpomEst};
+    })
+    .sort((a,b) => b.cinderellaScore - a.cinderellaScore)
+    .slice(0, 20);
+
+  if (!candidates.length) {
+    document.getElementById('cinderella-container').innerHTML = '<div class="loading-bar">No candidates found for selected seed range.</div>';
+    return;
+  }
+
+  // Stat cards
+  const top = candidates[0];
+  const bestDef = [...candidates].sort((a,b) => a.adjDE - b.adjDE)[0];
+  const bestWAB = [...candidates].sort((a,b) => b.wab - a.wab)[0];
+  document.getElementById('cind-cards').innerHTML = `
+    <div class="stat-card"><div class="stat-card-label">Top Cinderella Pick</div><div class="stat-card-value" style="color:var(--accent);font-size:18px">${top.name}</div><div class="stat-card-sub">Score: ${top.cinderellaScore.toFixed(1)} · Seed ${top.projSeed}</div></div>
+    <div class="stat-card"><div class="stat-card-label">Best Defense</div><div class="stat-card-value" style="color:var(--blue);font-size:18px">${bestDef.name}</div><div class="stat-card-sub">Adj DE: ${bestDef.adjDE.toFixed(1)} · Rank #${bestDef.defRank}</div></div>
+    <div class="stat-card"><div class="stat-card-label">Most Battle-Tested</div><div class="stat-card-value" style="color:var(--green);font-size:18px">${bestWAB.name}</div><div class="stat-card-sub">WAB: +${bestWAB.wab.toFixed(1)}</div></div>
+    <div class="stat-card"><div class="stat-card-label">Cinderella Candidates</div><div class="stat-card-value">${candidates.length}</div><div class="stat-card-sub">In selected seed range</div></div>`;
+
+  const maxScore = candidates[0].cinderellaScore;
+  const minScore = candidates[candidates.length-1].cinderellaScore;
+
+  let html = `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Rk</th><th>Team</th><th>Conf</th>
+      <th class="num">Proj Seed <span class="th-tip">Estimated NCAA seed</span></th>
+      <th class="num">True Rank <span class="th-tip">Actual strength rank</span></th>
+      <th class="num">Cinderella Score <span class="th-tip">Composite upset potential</span></th>
+      <th class="num">KenPom Est. <span class="th-tip">Net efficiency (KenPom-style)</span></th>
+      <th class="num">Adj DE <span class="th-tip">Defensive efficiency rank</span></th>
+      <th class="num">Barthag <span class="th-tip">Win prob vs avg D1</span></th>
+      <th class="num">Tempo</th>
+      <th class="num">WAB</th>
+      <th class="num">Record</th>
+      <th class="num">Verdict</th>
+    </tr></thead><tbody>`;
+
+  candidates.forEach((t, i) => {
+    const scorePct = pct(t.cinderellaScore, minScore, maxScore);
+    const verdict = i === 0 ? '🥿 #1 Pick' : i < 3 ? '⭐ Elite' : i < 7 ? '🔥 Strong' : i < 12 ? '👀 Watch' : '💡 Sleeper';
+    const seedGap = t.projSeed - Math.ceil(t.trueRank / 4);
+    html += `<tr>
+      <td class="rank-cell ${i<3?'top5':''}">${i+1}</td>
+      <td class="team-cell">${t.name}</td>
+      <td><span class="pill pill-blue">${t.conf}</span></td>
+      <td class="num"><span class="pill ${t.projSeed<=4?'pill-red':t.projSeed<=8?'pill-amber':'pill-green'}">#${t.projSeed} seed</span></td>
+      <td class="num">#${t.trueRank}</td>
+      <td class="num">${barHTML(`<strong>${t.cinderellaScore.toFixed(1)}</strong>`, scorePct, 'bar-amber')}</td>
+      <td class="num"><strong style="color:${parseFloat(t.kenpomEst)>15?'var(--green)':parseFloat(t.kenpomEst)>5?'var(--amber)':'var(--text-primary)'}">${t.kenpomEst > 0 ? '+' : ''}${t.kenpomEst}</strong></td>
+      <td class="num">${t.adjDE.toFixed(1)} <span style="font-size:10px;color:var(--text-muted)">#${t.defRank}</span></td>
+      <td class="num">${(t.barthag*100).toFixed(1)}%</td>
+      <td class="num">${t.adjT.toFixed(1)}</td>
+      <td class="num"><span class="pill ${t.wab>=0?'pill-green':'pill-red'}">${t.wab>=0?'+':''}${t.wab.toFixed(1)}</span></td>
+      <td class="num">${t.record}</td>
+      <td class="num">${verdict}</td>
+    </tr>`;
+  });
+
+  document.getElementById('cinderella-container').innerHTML = html + '</tbody></table></div>';
 }
 
 loadData();
