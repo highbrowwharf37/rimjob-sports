@@ -310,6 +310,15 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
 <script>
 let allTeams = [], allPlayers = [];
 const DATA_URL = 'https://raw.githubusercontent.com/highbrowwharf37/Ishaan-s-coding/main/data.json';
+// How much strength-of-losses (SoL) should influence pairwise win probs (0 = off, 1 = full)
+const SOL_WEIGHT = 0.25;
+
+function clamp01(v) { return Math.max(0.0001, Math.min(0.9999, v)); }
+function adjustedBarthag(a, b) {
+  // a, b are team objects; bias towards teams whose losses were against stronger opponents
+  const adj = a.barthag + SOL_WEIGHT * ((a.sol || 0) - (b.sol || 0));
+  return clamp01(adj);
+}
 
 // ===== LOAD =====
 async function loadData() {
@@ -380,6 +389,9 @@ function parseTeams(raw) {
       w, l, record: `${w}–${l}`,
       adjOE, adjDE, netEM, barthag,
       sos, wab, adjT, oppO, oppD,
+      // strength-of-losses: schedule strength weighted by share of games lost
+      lossPct: (w + l) > 0 ? (l / (w + l)) : 0,
+      sol: ((parseFloat(r[22]) || parseFloat(r[23]) || 0) * ((w + l) > 0 ? (l / (w + l)) : 0)),
       raw: r
     };
   }).filter(t => t && t.name && (t.w + t.l) > 0);
@@ -427,6 +439,7 @@ function renderPower() {
       <th class="num">Adj OE</th><th class="num">Adj DE</th>
       <th class="num">Tempo</th>
       <th class="num">WAB <span class="th-tip">Wins above bubble</span></th>
+      <th class="num">SoL <span class="th-tip">Strength of losses</span></th>
     </tr></thead><tbody>`;
   teams.forEach((t,i) => {
     const p = pct(t.netEM, minEM, maxEM);
@@ -441,6 +454,7 @@ function renderPower() {
       <td class="num">${t.adjDE.toFixed(1)}</td>
       <td class="num">${t.adjT.toFixed(1)}</td>
       <td class="num"><span class="pill ${t.wab>=0?'pill-green':'pill-red'}">${t.wab>=0?'+':''}${t.wab.toFixed(1)}</span></td>
+      <td class="num">${t.sol.toFixed(2)}</td>
     </tr>`;
   });
   document.getElementById('power-container').innerHTML = html + '</tbody></table></div>';
@@ -559,9 +573,9 @@ function runPredictor() {
   const b = allTeams.find(t=>t.name===nameB);
   if (!a || !b) return;
 
-  // Win probability using log5 formula with barthag
-  const pA = a.barthag;
-  const pB = b.barthag;
+  // Win probability using log5 formula with barthag adjusted by strength-of-losses
+  const pA = adjustedBarthag(a, b);
+  const pB = adjustedBarthag(b, a);
   const winA = (pA - pA*pB) / (pA + pB - 2*pA*pB);
   const winB = 1 - winA;
   const pctA = (winA * 100).toFixed(1);
@@ -721,9 +735,9 @@ function renderH2H() {
     </div>`;
   }).join('');
 
-  // Win probability
-  const pA = a.barthag;
-  const pB = b.barthag;
+  // Win probability (use SoL-adjusted barthags)
+  const pA = adjustedBarthag(a, b);
+  const pB = adjustedBarthag(b, a);
   const winA = (pA - pA*pB) / (pA + pB - 2*pA*pB);
 
   document.getElementById('h2h-container').innerHTML = `
@@ -750,8 +764,9 @@ function renderUpset() {
     // Find a higher-ranked opponent this underdog could realistically face
     const randOpp = sorted[Math.floor(i * 0.3)]; // a team ranked ~30% higher
     if (!randOpp) continue;
-    const pU = underdog.barthag;
-    const pF = randOpp.barthag;
+    // compute upset probability using SoL-adjusted barthags
+    const pU = adjustedBarthag(underdog, randOpp);
+    const pF = adjustedBarthag(randOpp, underdog);
     const upsetProb = (pU - pU*pF) / (pU + pF - 2*pU*pF);
     if (upsetProb > 0.30 && upsetProb < 0.50) {
       upsets.push({underdog, favorite: randOpp, upsetProb});
