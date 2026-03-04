@@ -1,108 +1,150 @@
-# CBB Analytics — College Basketball Rankings
+# CBB Analytics + NBA Live
 
-A React + Vite + TypeScript web application providing comprehensive analytics, power rankings, game prediction, and advanced metrics for NCAA Men's Basketball.
+This repo contains two frontend experiences:
 
-## Features
+1. `cbb-data` — a React + TypeScript NCAA basketball analytics dashboard.
+2. `nba-live` — a standalone NBA live game tracker (schedule, play-by-play, and player stats) powered by Sportradar.
 
-- **Power Rankings**: Adjusted efficiency rankings for all D1 teams
-- **Efficiency Analysis**: Compare offensive vs. defensive efficiency dynamically
-- **Schedule Strength**: SOS metrics showing how hard a team's schedule has been
-- **Game Predictor**: Simulate head-to-head matchups using adjusted efficiency margins (Log5 formula)
-- **Bubble Tracker**: Track teams on the bubble for tournament inclusion
-- **Momentum**: Team performance trends over recent games
-- **Head-to-Head**: Direct side-by-side comparison of any two teams
-- **Upset Alerts**: Identify trap games and potential upsets based on efficiency gaps
-- **Conference Strength**: Conference-wide aggregate metrics
-- **Cinderella Watch**: Mid-majors with the statistical profile of a bracket buster
-- **Draft Board**: 2026 NBA Draft prospect rankings with team fit analysis
+## What Is Included
+
+### CBB dashboard (`/cbb-data.html`)
+
+- Power rankings
+- Efficiency analysis
+- Schedule strength
+- Game predictor
+- Bubble tracker
+- Momentum
+- Head-to-head comparison
+- Upset alerts
+- Conference strength
+- Cinderella watch
+- Draft board
+
+### NBA live tracker (`/nba_live/nba-live.html`)
+
+- Date-based NBA schedule browsing
+- Live play-by-play feed
+- Team logos (local assets with CDN fallback)
+- Team context under scoreboard (record / standings when available)
+- Player box-score style stat tables
+- Side-by-side PBP + player stats layout (desktop)
+- Show/hide left games menu toggle
+- Final score hydration for completed games
+- Adaptive request throttling with backoff for trial-rate-limited APIs
 
 ## Tech Stack
 
-- **Frontend**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Data**: Python script fetching from [Barttorvik](https://barttorvik.com), cached in `data/data.json`
-- **CI**: GitHub Actions auto-updates data daily at 8am UTC
+- React 18
+- TypeScript
+- Vite
+- Plain HTML/CSS/JS page under `public/` for NBA live
 
-## Project Structure
-
-```
-├── src/
-│   ├── components/
-│   │   ├── layout/       # Header, NavBar
-│   │   ├── tabs/         # One component per dashboard tab (11 total)
-│   │   └── ui/           # Shared primitives (SOLBadge, BarCell, Loading, etc.)
-│   ├── data/
-│   │   └── draftProspects.ts   # Static 2026 NBA Draft data
-│   ├── hooks/
-│   │   └── useTeamData.ts      # Fetches + parses + computes SOL scores
-│   ├── styles/
-│   │   └── global.css          # CSS variables, table styles, all shared classes
-│   ├── types/index.ts           # TypeScript interfaces (Team, TeamWithSOL, etc.)
-│   └── utils/                  # Pure functions: parseTeams, computeSOL, predictor, formatting
-├── data/
-│   └── data.json               # Cached team + player data (auto-updated by CI)
-├── scripts/
-│   └── fetch-data/
-│       └── fetch_cbb_data.py   # Fetches Barttorvik data → writes data/data.json
-├── public/
-│   ├── cbb-data.html           # Canonical CBB app entry page
-│   ├── cbb_data/               # Back-compat redirect path
-│   └── nba_live/nba-live.html  # Standalone NBA live play-by-play tracker (Sportradar API)
-├── .github/workflows/
-│   └── fetch-data.yml          # Daily cron: runs Python script and commits data
-└── archive/                    # Old iterative HTML versions (pre-React, for reference)
-```
-
-## Getting Started
+## Local Development
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v18+
-- [Python 3](https://www.python.org/) (only needed to manually refresh data)
+- Node.js 18+
+- npm
+- Python 3 (only for manual CBB data refresh script)
 
-### Run locally
+### Install
 
 ```bash
 npm install
+```
+
+### Start dev server
+
+```bash
 npm run dev
 ```
 
-Opens at `http://localhost:5173` by default.
+Then open:
 
-### Build for production
+- CBB dashboard: `http://localhost:5173/cbb-data.html`
+- NBA live tracker: `http://localhost:5173/nba_live/nba-live.html`
 
-```bash
-npm run build   # outputs to dist/
-npm run preview # preview the production build locally
-```
+Legacy redirect routes also exist:
 
-## Updating Data
+- `http://localhost:5173/cbb_data.html`
+- `http://localhost:5173/cbb_data/`
+- `http://localhost:5173/nba-live.html`
 
-Data is auto-updated daily via GitHub Actions. To refresh manually:
+## Data & Asset Scripts
+
+### Refresh CBB source data
 
 ```bash
 python3 scripts/fetch-data/fetch_cbb_data.py
 ```
 
-This writes fresh data to `data/data.json`. In dev mode, the app reads from `/data/data.json` directly. In production, it fetches from the GitHub raw URL.
+Writes to `data/data.json`.
 
-## NBA Live Tracker
-
-`public/nba_live/nba-live.html` is a standalone page (no build step required) that shows real-time NBA play-by-play using the Sportradar NBA v8 API. Open it via the dev server at `http://localhost:5173/nba_live/nba-live.html` (or legacy redirect `http://localhost:5173/nba-live.html`) or directly in a browser. Features:
-
-- All games for the current day with live scores
-- Real-time PBP feed (polls every 2 seconds for live games)
-- Strict 1 QPS rate limiting with exponential backoff on 429s
-- Date navigation (prev/next day)
-- All 30 NBA team colors
-
-Optional: prefetch local team logos for faster loads and offline-friendly behavior:
+### Download NBA team logos locally
 
 ```bash
 ./scripts/fetch-data/fetch_nba_logos.sh
 ```
 
+Downloads PNGs into `public/nba_live/logos/`.
+
+## NBA Live API Notes
+
+The NBA live page is currently configured for Sportradar trial access in:
+
+- `public/nba_live/nba-live.html`
+
+Key points:
+
+- Trial access is rate-limited and may return `429`.
+- The page uses an adaptive queue that increases pace when stable and backs off on throttling.
+- Optional proxy support exists in `proxy/server.js` and `proxy/startup-script.sh`.
+
+## Project Structure
+
+```text
+.
+├── data/
+│   └── data.json
+├── proxy/
+│   ├── server.js
+│   └── startup-script.sh
+├── public/
+│   ├── cbb-data.html
+│   ├── cbb_data.html                # redirect
+│   ├── cbb_data/index.html          # redirect
+│   ├── nba-live.html                # redirect
+│   └── nba_live/
+│       ├── nba-live.html
+│       └── logos/
+├── scripts/
+│   └── fetch-data/
+│       ├── fetch_cbb_data.py
+│       └── fetch_nba_logos.sh
+├── src/
+│   ├── components/
+│   │   ├── layout/
+│   │   ├── tabs/
+│   │   └── ui/
+│   ├── data/
+│   ├── hooks/
+│   ├── styles/
+│   ├── types/
+│   ├── utils/
+│   ├── App.tsx
+│   └── main.tsx
+├── package.json
+└── README.md
+```
+
+## Commands
+
+- `npm run dev` — start Vite dev server
+- `npm run build` — type-check + Vite build
+- `npm run preview` — preview production build
+
 ## Data Sources
 
-- **Team stats**: [Barttorvik](https://barttorvik.com) — adjusted offensive/defensive efficiency, tempo, Barthag, WAB
-- **NBA live data**: [Sportradar NBA v8 API](https://developer.sportradar.com/docs/read/basketball/NBA_v8)
+- Barttorvik: https://barttorvik.com
+- Sportradar NBA v8: https://developer.sportradar.com/docs/read/basketball/NBA_v8
