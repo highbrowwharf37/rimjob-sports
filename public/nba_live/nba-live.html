@@ -119,6 +119,23 @@
       gap: 12px;
     }
 
+    .menu-toggle-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      transition: background 0.15s;
+    }
+
+    .menu-toggle-btn:hover {
+      background: var(--dim);
+    }
+
     #clock {
       font-size: 12px;
       color: var(--muted);
@@ -340,6 +357,23 @@
       gap: 10px;
     }
 
+    .team-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .team-logo-fallback {
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
     .team-swatch {
       width: 4px;
       height: 32px;
@@ -428,6 +462,21 @@
       flex: 1;
     }
 
+    .pbp-team-ident {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .pbp-team-logo {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
     .pbp-team-alias {
       font-size: 13px;
       font-weight: 700;
@@ -440,6 +489,19 @@
       letter-spacing: -2px;
       font-variant-numeric: tabular-nums;
       line-height: 1;
+    }
+
+    .pbp-team-meta {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .pbp-team-meta-line {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .pbp-divider {
@@ -471,8 +533,157 @@
 
     .pbp-feed {
       overflow-y: auto;
-      flex: 1;
       padding: 0;
+      min-height: 220px;
+    }
+
+    .pbp-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .stats-panel {
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      background: #faf8f5;
+      overflow-y: auto;
+      min-height: 220px;
+    }
+
+    .stats-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .stats-team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stats-team-head {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .stats-team-sub {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .stats-table-wrap {
+      overflow-x: auto;
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 660px;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stats-table th {
+      padding: 7px 8px;
+      background: #f4f1ed;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .stats-table th:first-child,
+    .stats-table td:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      background: var(--surface);
+      z-index: 1;
+    }
+
+    .stats-table th:first-child {
+      background: #f4f1ed;
+    }
+
+    .stats-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .stats-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats-table tr:nth-child(even) td {
+      background: #fcfbf9;
+    }
+
+    .stats-player {
+      font-weight: 600;
+      color: var(--text);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stats-empty {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 10px 8px;
+    }
+
+    .stats-foot {
+      margin-top: 8px;
+      color: var(--dim);
+      font-size: 10px;
+    }
+
+    @media (min-width: 1280px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 980px) {
+      .pbp-body {
+        grid-template-columns: minmax(420px, 1.35fr) minmax(320px, 1fr);
+      }
+
+      .stats-panel {
+        border-top: none;
+        border-left: 1px solid var(--border);
+      }
     }
 
     .pbp-empty {
@@ -749,6 +960,17 @@
       border-radius: 3px;
     }
 
+    .menu-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 3px;
+    }
+
+    .menu-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
     .status-bar {
       background: var(--surface);
       border-bottom-color: var(--border);
@@ -769,6 +991,14 @@
       .main {
         grid-template-columns: 390px 1fr;
       }
+    }
+
+    body.games-hidden .main {
+      grid-template-columns: 1fr;
+    }
+
+    body.games-hidden #games-panel {
+      display: none;
     }
 
     .panel,
@@ -1009,6 +1239,7 @@
       <div class="header-right">
         <span id="clock">—</span>
         <span class="queue-badge">queue: <span id="queue-depth">0</span></span>
+        <button class="menu-toggle-btn" id="menu-toggle">hide games</button>
         <div class="live-count" id="live-indicator" style="display:none">
           <div class="pulse-dot"></div>
           <span id="live-count-text">0 live</span>
@@ -1036,7 +1267,7 @@
 
   <div class="main">
     <!-- Games List -->
-    <div class="panel">
+    <div class="panel" id="games-panel">
       <div class="panel-header">
         <span class="panel-title" id="games-title">games</span>
         <span id="games-count" style="font-size:11px;color:var(--muted)"></span>
@@ -1053,13 +1284,27 @@
       <div class="pbp-header">
         <div class="pbp-scoreboard" id="pbp-scoreboard">
           <div class="pbp-team">
-            <div class="pbp-team-alias" id="pbp-away-alias">—</div>
+            <div class="pbp-team-ident">
+              <img class="pbp-team-logo" id="pbp-away-logo" alt="" onerror="handleHeaderLogoError(this)" style="display:none">
+              <div class="pbp-team-alias" id="pbp-away-alias">—</div>
+            </div>
             <div class="pbp-team-score" id="pbp-away-score" style="color:var(--muted)">—</div>
+            <div class="pbp-team-meta">
+              <div class="pbp-team-meta-line" id="pbp-away-meta-record">record n/a</div>
+              <div class="pbp-team-meta-line" id="pbp-away-meta-rank">standings n/a</div>
+            </div>
           </div>
           <div class="pbp-divider">—</div>
           <div class="pbp-team">
-            <div class="pbp-team-alias" id="pbp-home-alias">—</div>
+            <div class="pbp-team-ident">
+              <img class="pbp-team-logo" id="pbp-home-logo" alt="" onerror="handleHeaderLogoError(this)" style="display:none">
+              <div class="pbp-team-alias" id="pbp-home-alias">—</div>
+            </div>
             <div class="pbp-team-score" id="pbp-home-score" style="color:var(--muted)">—</div>
+            <div class="pbp-team-meta">
+              <div class="pbp-team-meta-line" id="pbp-home-meta-record">record n/a</div>
+              <div class="pbp-team-meta-line" id="pbp-home-meta-rank">standings n/a</div>
+            </div>
           </div>
         </div>
         <div class="pbp-game-info">
@@ -1068,11 +1313,16 @@
           <span id="pbp-status-label" style="font-size:11px;color:var(--muted)"></span>
         </div>
       </div>
-      <div class="pbp-feed" id="pbp-feed">
-        <div class="pbp-empty">
-          <div style="font-size:32px;margin-bottom:12px"></div>
-          <div style="font-weight:700;margin-bottom:6px">select a game</div>
-          <div style="font-size:12px;color:var(--muted)">click any game on the left to view live play-by-play</div>
+      <div class="pbp-body">
+        <div class="pbp-feed" id="pbp-feed">
+          <div class="pbp-empty">
+            <div style="font-size:32px;margin-bottom:12px"></div>
+            <div style="font-weight:700;margin-bottom:6px">select a game</div>
+            <div style="font-size:12px;color:var(--muted)">click any game on the left to view live play-by-play</div>
+          </div>
+        </div>
+        <div class="stats-panel" id="stats-panel">
+          <div class="stats-empty">select a game to view team context and player stats</div>
         </div>
       </div>
     </div>
@@ -1089,6 +1339,8 @@
     const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
     const PROXY_BASE = isLocal ? '' : GCP_PROXY;
     const BASE = `${PROXY_BASE}/sportradar/nba/${ACCESS_LEVEL}/v8/en`;
+    const TEAM_LOGO_LOCAL_BASE = '/nba_live/logos';
+    const TEAM_LOGO_REMOTE_BASE = 'https://a.espncdn.com/i/teamlogos/nba/500';
 
     // ============================================================
     // TEAM COLORS  (primary, secondary)
@@ -1129,20 +1381,88 @@
       return TEAM[alias] || { color: '#6b6b85', bg: 'rgba(107,107,133,0.1)', full: alias };
     }
 
+    function logoCandidates(alias) {
+      const key = String(alias || '').trim().toLowerCase();
+      if (!/^[a-z0-9]+$/.test(key)) return [];
+      const remoteKey = key === 'nop' ? 'no' : key === 'uta' ? 'utah' : key;
+      return [
+        `${TEAM_LOGO_LOCAL_BASE}/${key}.webp`,
+        `${TEAM_LOGO_LOCAL_BASE}/${key}.png`,
+        `${TEAM_LOGO_REMOTE_BASE}/${remoteKey}.png`,
+      ];
+    }
+
+    function teamLogoHtml(alias, teamName, className = 'team-logo') {
+      const candidates = logoCandidates(alias);
+      const [first, ...rest] = candidates;
+      if (!first) return `<span class="${className} team-logo-fallback" aria-hidden="true"></span>`;
+      const queue = rest.join('|');
+      const alt = escHtml(`${(teamName || alias || 'team').toLowerCase()} logo`);
+      return `<img class="${className}" src="${first}" data-logo-queue="${queue}" alt="${alt}" loading="lazy" decoding="async" onerror="handleLogoError(this)">`;
+    }
+
+    function handleLogoError(img) {
+      const queue = (img.dataset.logoQueue || '').split('|').filter(Boolean);
+      if (!queue.length) {
+        const fallback = document.createElement('span');
+        fallback.className = `${img.className} team-logo-fallback`;
+        fallback.setAttribute('aria-hidden', 'true');
+        img.replaceWith(fallback);
+        return;
+      }
+      const [next, ...rest] = queue;
+      img.dataset.logoQueue = rest.join('|');
+      img.src = next;
+    }
+    window.handleLogoError = handleLogoError;
+
+    function setHeaderLogo(id, alias, teamName) {
+      const img = document.getElementById(id);
+      if (!img) return;
+      const candidates = logoCandidates(alias);
+      const [first, ...rest] = candidates;
+      if (!first) {
+        img.style.display = 'none';
+        img.removeAttribute('src');
+        return;
+      }
+      img.style.display = '';
+      img.alt = `${(teamName || alias || 'team').toLowerCase()} logo`;
+      img.dataset.logoQueue = rest.join('|');
+      img.src = first;
+    }
+
+    function handleHeaderLogoError(img) {
+      const queue = (img.dataset.logoQueue || '').split('|').filter(Boolean);
+      if (!queue.length) {
+        img.style.display = 'none';
+        return;
+      }
+      const [next, ...rest] = queue;
+      img.dataset.logoQueue = rest.join('|');
+      img.src = next;
+    }
+    window.handleHeaderLogoError = handleHeaderLogoError;
+
     // ============================================================
-    // REQUEST QUEUE — strict 1 QPS
+    // REQUEST QUEUE — adaptive rate limiting for trial
     // ============================================================
     const queue = [];
     let queueProcessing = false;
     let lastReqTime = 0;
     let requestCount = 0;
-    let retryDelay = 1000;
+    let retryDelay = 800;
+    let minGapMs = 300; // start around ~3.3 req/sec
+    const MIN_GAP_FLOOR_MS = 180; // cap max pace (~5.5 req/sec)
+    const MIN_GAP_CEIL_MS = 2500; // heavy backoff cap
+    let successStreak = 0;
+    let backoffUntil = 0;
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     function enqueue(fn, priority = 0) {
       return new Promise((resolve, reject) => {
-        queue.push({ fn, resolve, reject, priority, added: Date.now() });
+        queue.push({ fn, resolve, reject, priority, added: Date.now(), attempts: 0 });
         queue.sort((a, b) => b.priority - a.priority);
         updateQueueUI();
         if (!queueProcessing) drainQueue();
@@ -1152,10 +1472,14 @@
     async function drainQueue() {
       queueProcessing = true;
       while (queue.length > 0) {
-        const gap = 1050 - (Date.now() - lastReqTime); // 1.05s minimum between requests
-        if (gap > 0) await sleep(gap);
+        const now = Date.now();
+        const gapWait = Math.max(0, minGapMs - (now - lastReqTime));
+        const backoffWait = Math.max(0, backoffUntil - now);
+        const waitMs = Math.max(gapWait, backoffWait);
+        if (waitMs > 0) await sleep(waitMs);
 
-        const { fn, resolve, reject } = queue.shift();
+        const item = queue.shift();
+        const { fn, resolve, reject } = item;
         updateQueueUI();
         lastReqTime = Date.now();
         requestCount++;
@@ -1163,14 +1487,32 @@
 
         try {
           const result = await fn();
-          retryDelay = 1000;
+          retryDelay = 800;
+          successStreak++;
+          if (successStreak >= 10 && minGapMs > MIN_GAP_FLOOR_MS) {
+            minGapMs = Math.max(MIN_GAP_FLOOR_MS, minGapMs - 20);
+            successStreak = 0;
+          }
           resolve(result);
         } catch (err) {
           if (err.status === 429) {
-            // Rate limited — re-add with backoff
-            retryDelay = Math.min(retryDelay * 2, 30000);
-            setStatus(`rate limited. backing off ${(retryDelay / 1000).toFixed(0)}s…`, 'loading');
-            await sleep(retryDelay);
+            successStreak = 0;
+            minGapMs = Math.min(MIN_GAP_CEIL_MS, Math.round(minGapMs * 1.35) + 40);
+            retryDelay = Math.min(Math.round(retryDelay * 1.8), 30000);
+            backoffUntil = Date.now() + retryDelay;
+            setStatus(
+              `rate limited. now ${(1000 / minGapMs).toFixed(2)} req/s, retry ${(retryDelay / 1000).toFixed(1)}s`,
+              'loading'
+            );
+
+            // Retry a couple times in-queue before bubbling the error.
+            if (item.attempts < 2) {
+              item.attempts += 1;
+              item.added = Date.now();
+              queue.unshift(item);
+              updateQueueUI();
+              continue;
+            }
           }
           reject(err);
         }
@@ -1217,8 +1559,12 @@
       viewDate: new Date(), // The date being viewed
       games: [],         // Raw game objects from schedule
       pbp: {},         // { gameId: pbpData }
+      summary: {},     // { gameId: summaryData }
+      summaryHydrating: {}, // { gameId: true } for left-list score hydration
       selectedId: null,
+      gamesMenuVisible: true,
       pollers: {},         // { gameId: timeoutId }
+      summaryPoller: null, // selected game summary poll loop
       knownEventIds: {},      // { gameId: Set<eventId> }
     };
 
@@ -1238,6 +1584,295 @@
 
     function gamesTitleLabel(d) {
       return `games for ${dateLabel(d)}`;
+    }
+
+    function setGamesMenuVisibility(show) {
+      state.gamesMenuVisible = !!show;
+      document.body.classList.toggle('games-hidden', !state.gamesMenuVisible);
+      const btn = document.getElementById('menu-toggle');
+      if (btn) btn.textContent = state.gamesMenuVisible ? 'hide games' : 'show games';
+    }
+
+    function toggleGamesMenu() {
+      setGamesMenuVisibility(!state.gamesMenuVisible);
+    }
+
+    function firstPresent(values) {
+      for (const value of values) {
+        if (value !== undefined && value !== null && value !== '') return value;
+      }
+      return null;
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined || value === '') return null;
+      if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+      const cleaned = String(value).replace(/[^\d.+-]/g, '');
+      if (!cleaned || cleaned === '+' || cleaned === '-' || cleaned === '.') return null;
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function toInt(value) {
+      const num = parseInt(value, 10);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function minutesAsNumber(value) {
+      if (value === null || value === undefined || value === '') return 0;
+      if (typeof value === 'number') return value;
+      const text = String(value);
+      if (text.includes(':')) {
+        const [mm, ss] = text.split(':').map(v => Number(v));
+        if (Number.isFinite(mm) && Number.isFinite(ss)) return mm + ss / 60;
+      }
+      return toNumber(text) || 0;
+    }
+
+    function safeStat(stats, keys) {
+      if (!stats) return null;
+      for (const key of keys) {
+        const value = stats[key];
+        if (value !== undefined && value !== null && value !== '') return value;
+      }
+      return null;
+    }
+
+    function fmtNum(value, digits = 0) {
+      const n = toNumber(value);
+      if (n === null) return '—';
+      return digits > 0 ? n.toFixed(digits) : String(Math.round(n));
+    }
+
+    function fmtMinutes(value) {
+      if (value === null || value === undefined || value === '') return '—';
+      const text = String(value);
+      if (text.includes(':')) return text;
+      const n = toNumber(value);
+      return n === null ? '—' : String(Math.round(n));
+    }
+
+    function fmtSigned(value) {
+      const n = toNumber(value);
+      if (n === null) return '—';
+      const rounded = Math.abs(n % 1) > 0.001 ? n.toFixed(1) : String(Math.round(n));
+      if (n > 0) return `+${rounded}`;
+      return rounded;
+    }
+
+    function fmtMadeAttempt(stats, madeKeys, attemptKeys) {
+      const made = safeStat(stats, madeKeys);
+      const att = safeStat(stats, attemptKeys);
+      if (made === null && att === null) return '—';
+      return `${fmtNum(made)}-${fmtNum(att)}`;
+    }
+
+    function extractRecord(team) {
+      const record = team?.record || {};
+      const overall = record.overall || record.total || record.season || {};
+      const wins = firstPresent([overall.wins, record.wins, team?.wins]);
+      const losses = firstPresent([overall.losses, record.losses, team?.losses]);
+      if (wins === null || losses === null) return null;
+      return `${wins}-${losses}`;
+    }
+
+    function extractRank(team, type) {
+      const record = team?.record || {};
+      const rank = team?.rank || {};
+      const raw = type === 'conference'
+        ? firstPresent([rank.conference, rank.conference_rank, record.conference?.rank, team?.conference_rank])
+        : firstPresent([rank.division, rank.division_rank, record.division?.rank, team?.division_rank]);
+      return toInt(raw);
+    }
+
+    function extractSeed(team) {
+      const rank = team?.rank || {};
+      const raw = firstPresent([team?.seed, rank.seed, rank.league, rank.league_rank]);
+      return toInt(raw);
+    }
+
+    function teamRecordLine(team) {
+      const record = extractRecord(team);
+      return record ? `record ${record}` : 'record n/a';
+    }
+
+    function teamStandingLine(team) {
+      const conf = extractRank(team, 'conference');
+      const div = extractRank(team, 'division');
+      const seed = extractSeed(team);
+      const parts = [];
+      if (conf !== null) parts.push(`conf #${conf}`);
+      if (div !== null) parts.push(`div #${div}`);
+      if (seed !== null) parts.push(`seed #${seed}`);
+      return parts.length ? parts.join(' · ') : 'standings n/a';
+    }
+
+    function setTeamMeta(side, team) {
+      const recEl = document.getElementById(`pbp-${side}-meta-record`);
+      const rankEl = document.getElementById(`pbp-${side}-meta-rank`);
+      if (!recEl || !rankEl) return;
+      recEl.textContent = teamRecordLine(team);
+      rankEl.textContent = teamStandingLine(team);
+    }
+
+    function clearSummaryPoller() {
+      if (state.summaryPoller) {
+        clearTimeout(state.summaryPoller);
+        state.summaryPoller = null;
+      }
+    }
+
+    function scheduleSummaryPoll(gameId, delay = 6000) {
+      clearSummaryPoller();
+      state.summaryPoller = setTimeout(async () => {
+        state.summaryPoller = null;
+        if (state.selectedId !== gameId) return;
+        await loadSummary(gameId, true);
+        const game = state.games.find(g => g.id === gameId);
+        const status = state.pbp[gameId]?.status || state.summary[gameId]?.status || game?.status || '';
+        if (isLive(status)) scheduleSummaryPoll(gameId, 6000);
+      }, delay);
+    }
+
+    function ensureSummaryPolling(gameId, status) {
+      if (state.selectedId !== gameId) return;
+      if (isLive(status)) {
+        if (!state.summaryPoller) scheduleSummaryPoll(gameId, 4000);
+      } else {
+        clearSummaryPoller();
+      }
+    }
+
+    function playerDisplayName(player) {
+      if (!player) return '—';
+      if (player.full_name) return player.full_name;
+      const first = firstPresent([player.preferred_name, player.first_name]);
+      const last = player.last_name || '';
+      const full = `${first || ''} ${last}`.trim();
+      if (full) return full;
+      return player.name || '—';
+    }
+
+    function playersWithStats(team) {
+      const players = Array.isArray(team?.players) ? team.players : [];
+      return players
+        .filter(p => {
+          if (!p || !p.statistics || Object.keys(p.statistics).length === 0) return false;
+          const mins = safeStat(p.statistics, ['minutes', 'minutes_played']);
+          return minutesAsNumber(mins) > 0;
+        })
+        .sort((a, b) => {
+          const aStats = a.statistics || {};
+          const bStats = b.statistics || {};
+          const aPts = toNumber(safeStat(aStats, ['points'])) || 0;
+          const bPts = toNumber(safeStat(bStats, ['points'])) || 0;
+          const aMin = minutesAsNumber(safeStat(aStats, ['minutes', 'minutes_played']));
+          const bMin = minutesAsNumber(safeStat(bStats, ['minutes', 'minutes_played']));
+          if (bPts !== aPts) return bPts - aPts;
+          return bMin - aMin;
+        });
+    }
+
+    function renderPlayerStatsLoading() {
+      const panel = document.getElementById('stats-panel');
+      if (!panel) return;
+      panel.innerHTML = '<div class="stats-empty">loading player stats…</div>';
+    }
+
+    function renderPlayerStats(gameId, summaryData) {
+      const panel = document.getElementById('stats-panel');
+      if (!panel) return;
+      const game = state.games.find(g => g.id === gameId);
+      if (!summaryData || !game) {
+        panel.innerHTML = '<div class="stats-empty">player stats are not available yet.</div>';
+        return;
+      }
+
+      const away = summaryData.away || game.away || {};
+      const home = summaryData.home || game.home || {};
+      const awayAlias = away.alias || away.abbr || game.away?.alias || 'away';
+      const homeAlias = home.alias || home.abbr || game.home?.alias || 'home';
+      const awayInfo = teamInfo(awayAlias);
+      const homeInfo = teamInfo(homeAlias);
+      const awayPlayers = playersWithStats(away);
+      const homePlayers = playersWithStats(home);
+      const status = String(summaryData.status || state.pbp[gameId]?.status || game.status || '').toLowerCase();
+
+      function teamTableHtml(alias, info, teamObj, players) {
+        const rowHtml = players.map((player) => {
+          const stats = player.statistics || {};
+          const mins = safeStat(stats, ['minutes', 'minutes_played']);
+          const pts = safeStat(stats, ['points']);
+          const reb = safeStat(stats, ['rebounds', 'total_rebounds']);
+          const ast = safeStat(stats, ['assists']);
+          const stl = safeStat(stats, ['steals']);
+          const blk = safeStat(stats, ['blocks']);
+          const tov = safeStat(stats, ['turnovers']);
+          const plusMinus = safeStat(stats, ['plus_minus', 'plusminus', 'plus_minus_points', 'plus_minus_rating']);
+          const fg = fmtMadeAttempt(stats, ['field_goals_made', 'field_goals'], ['field_goals_att', 'field_goals_attempted']);
+          const tp = fmtMadeAttempt(stats, ['three_points_made', 'three_point_field_goals_made'], ['three_points_att', 'three_point_field_goals_att']);
+          const ft = fmtMadeAttempt(stats, ['free_throws_made'], ['free_throws_att']);
+
+          return `<tr>
+            <td class="stats-player">${escHtml(playerDisplayName(player))}</td>
+            <td>${fmtMinutes(mins)}</td>
+            <td>${fmtNum(pts)}</td>
+            <td>${fmtNum(reb)}</td>
+            <td>${fmtNum(ast)}</td>
+            <td>${fmtNum(stl)}</td>
+            <td>${fmtNum(blk)}</td>
+            <td>${fmtNum(tov)}</td>
+            <td>${fg}</td>
+            <td>${tp}</td>
+            <td>${ft}</td>
+            <td>${fmtSigned(plusMinus)}</td>
+          </tr>`;
+        }).join('');
+
+        const emptyMsg = status === 'scheduled'
+          ? 'player stats will appear when the game starts.'
+          : 'player stats are not available yet.';
+
+        return `<div class="stats-team-card">
+          <div class="stats-team-head">
+            <span style="color:${info.color}">${escHtml(alias)}</span>
+            <span class="stats-team-sub">${escHtml(teamRecordLine(teamObj))}</span>
+          </div>
+          <div class="stats-table-wrap">
+            ${players.length ? `<table class="stats-table">
+              <thead>
+                <tr>
+                  <th>player</th>
+                  <th>min</th>
+                  <th>pts</th>
+                  <th>reb</th>
+                  <th>ast</th>
+                  <th>stl</th>
+                  <th>blk</th>
+                  <th>to</th>
+                  <th>fg</th>
+                  <th>3pt</th>
+                  <th>ft</th>
+                  <th>+/-</th>
+                </tr>
+              </thead>
+              <tbody>${rowHtml}</tbody>
+            </table>` : `<div class="stats-empty">${escHtml(emptyMsg)}</div>`}
+          </div>
+        </div>`;
+      }
+
+      panel.innerHTML = `
+        <div class="stats-head">
+          <span>player stats</span>
+          <span>${escHtml(status || 'scheduled')}</span>
+        </div>
+        <div class="stats-grid">
+          ${teamTableHtml(awayAlias, awayInfo, away, awayPlayers)}
+          ${teamTableHtml(homeAlias, homeInfo, home, homePlayers)}
+        </div>
+        <div class="stats-foot">updates automatically while live (rate-limited)</div>
+      `;
     }
 
     // ============================================================
@@ -1270,7 +1905,10 @@
         setStatus(`schedule loaded — ${state.games.length} game${state.games.length !== 1 ? 's' : ''}`, 'ok');
         renderGames();
         startLivePollers();
-        if (state.selectedId) loadPBP(state.selectedId);
+        if (state.selectedId) {
+          loadPBP(state.selectedId);
+          loadSummary(state.selectedId, true);
+        }
       } catch (err) {
         setStatus('failed to load schedule: ' + err.message, 'error');
         document.getElementById('games-list').innerHTML =
@@ -1299,6 +1937,73 @@
       if (!num) return '';
       if (num > 4) return `ot${num - 4 > 1 ? num - 4 : ''}`;
       return `q${num}`;
+    }
+
+    function isClosed(status) {
+      const s = String(status || '').toLowerCase();
+      return s === 'closed' || s === 'complete';
+    }
+
+    function scoreFromScoring(game, side) {
+      const scoring = Array.isArray(game?.scoring) ? game.scoring : [];
+      if (!scoring.length) return null;
+      const key = side === 'away' ? 'away_points' : 'home_points';
+
+      // If values are cumulative by period, last period is the final.
+      const lastValue = toNumber(scoring[scoring.length - 1]?.[key]);
+      if (lastValue !== null && lastValue > 0) return lastValue;
+
+      // Fallback for per-period scoring arrays.
+      let total = 0;
+      let found = false;
+      for (const period of scoring) {
+        const pts = toNumber(period?.[key]);
+        if (pts !== null) {
+          total += pts;
+          found = true;
+        }
+      }
+      return found ? total : null;
+    }
+
+    function resolveGameScore(game, side) {
+      const team = side === 'away' ? game?.away : game?.home;
+      const direct = toNumber(team?.points);
+      if (direct !== null) return direct;
+
+      if (isClosed(game?.status)) {
+        const fromScoring = scoreFromScoring(game, side);
+        if (fromScoring !== null) return fromScoring;
+      }
+
+      const summary = state.summary[game?.id] || null;
+      const fromSummary = toNumber(summary?.[side]?.points);
+      if (fromSummary !== null) return fromSummary;
+      return null;
+    }
+
+    function hydrateClosedGameScore(gameId) {
+      if (!gameId || state.summary[gameId] || state.summaryHydrating[gameId]) return;
+      state.summaryHydrating[gameId] = true;
+
+      fetchSummary(gameId)
+        .then((data) => {
+          state.summary[gameId] = data;
+          const game = state.games.find(g => g.id === gameId);
+          if (game && data) {
+            if (data.away?.points != null && game.away) game.away.points = data.away.points;
+            if (data.home?.points != null && game.home) game.home.points = data.home.points;
+          }
+          renderGames();
+          if (state.selectedId === gameId) {
+            renderPlayerStats(gameId, data);
+            updatePBPHeader(game || state.games.find(g => g.id === gameId), state.pbp[gameId], data);
+          }
+        })
+        .catch(() => { })
+        .finally(() => {
+          delete state.summaryHydrating[gameId];
+        });
     }
 
     function renderGames() {
@@ -1336,13 +2041,18 @@
         const homeAlias = home.alias || home.abbr || '—';
         const awayInfo = teamInfo(awayAlias);
         const homeInfo = teamInfo(homeAlias);
-        const awayScore = away.points ?? null;
-        const homeScore = home.points ?? null;
+        const awayScore = resolveGameScore(g, 'away');
+        const homeScore = resolveGameScore(g, 'home');
         const awayLeading = awayScore !== null && homeScore !== null && awayScore > homeScore;
         const homeLeading = homeScore !== null && awayScore !== null && homeScore > awayScore;
         const badge = gameStatusLabel(g.status);
         const live = isLive(g.status);
         const isSelected = g.id === state.selectedId;
+
+        // Backfill completed games that still don't carry score fields in schedule.
+        if (isClosed(g.status) && (awayScore === null || homeScore === null)) {
+          hydrateClosedGameScore(g.id);
+        }
 
         const card = document.createElement('div');
         card.className = `game-card${live ? ' live' : ''}${isSelected ? ' selected' : ''}`;
@@ -1357,6 +2067,8 @@
         const homeScoreHtml = homeScore !== null
           ? `<span class="team-score ${homeLeading ? 'leading' : awayScore !== null ? 'trailing' : ''}">${homeScore}</span>`
           : `<span class="team-score" style="color:var(--dim)">—</span>`;
+        const awayLogoHtml = teamLogoHtml(awayAlias, away.name || awayInfo.full || awayAlias);
+        const homeLogoHtml = teamLogoHtml(homeAlias, home.name || homeInfo.full || homeAlias);
 
         card.innerHTML = `
       <div class="game-status-row">
@@ -1366,7 +2078,7 @@
       <div class="teams-row">
         <div class="team-row">
           <div class="team-info">
-            <div class="team-swatch" style="background:${awayInfo.color}"></div>
+            ${awayLogoHtml}
             <div class="team-name-block">
               <span class="team-alias" style="color:${awayInfo.color}">${awayAlias}</span>
               <span class="team-full">${awayInfo.full}</span>
@@ -1377,7 +2089,7 @@
         <div class="score-divider"></div>
         <div class="team-row">
           <div class="team-info">
-            <div class="team-swatch" style="background:${homeInfo.color}"></div>
+            ${homeLogoHtml}
             <div class="team-name-block">
               <span class="team-alias" style="color:${homeInfo.color}">${homeAlias}</span>
               <span class="team-full">${homeInfo.full}</span>
@@ -1400,9 +2112,16 @@
     // GAME SELECTION
     // ============================================================
     function selectGame(gameId) {
+      clearSummaryPoller();
       state.selectedId = gameId;
       renderGames(); // re-render to update selected state
       loadPBP(gameId);
+      if (state.summary[gameId]) {
+        renderPlayerStats(gameId, state.summary[gameId]);
+      } else {
+        renderPlayerStatsLoading();
+      }
+      loadSummary(gameId);
 
       const game = state.games.find(g => g.id === gameId);
       if (game) updatePBPHeader(game);
@@ -1461,6 +2180,27 @@
     // ============================================================
     // PBP DATA PROCESSING
     // ============================================================
+    async function loadSummary(gameId, silent = false) {
+      try {
+        const data = await fetchSummary(gameId);
+        state.summary[gameId] = data;
+        if (gameId === state.selectedId) {
+          const game = state.games.find(g => g.id === gameId);
+          if (game) {
+            updatePBPHeader(game, state.pbp[gameId], data);
+            renderPlayerStats(gameId, data);
+            const status = state.pbp[gameId]?.status || data?.status || game.status || '';
+            ensureSummaryPolling(gameId, status);
+          }
+        }
+      } catch (err) {
+        if (!silent && gameId === state.selectedId) {
+          const panel = document.getElementById('stats-panel');
+          if (panel) panel.innerHTML = `<div class="stats-empty">could not load player stats: ${escHtml(err.message)}</div>`;
+        }
+      }
+    }
+
     function processPBPData(gameId, data) {
       if (!data) return;
       state.pbp[gameId] = data;
@@ -1470,19 +2210,23 @@
 
       if (gameId === state.selectedId) {
         renderPBP(gameId, data);
-        updatePBPHeader(state.games.find(g => g.id === gameId), data);
+        const game = state.games.find(g => g.id === gameId);
+        updatePBPHeader(game, data, state.summary[gameId]);
       }
     }
 
     async function loadPBP(gameId) {
       const feed = document.getElementById('pbp-feed');
       const game = state.games.find(g => g.id === gameId);
+      const summaryData = state.summary[gameId];
+
+      if (summaryData) renderPlayerStats(gameId, summaryData);
 
       if (game && !isLive(game.status) && game.status?.toLowerCase() !== 'closed' && game.status?.toLowerCase() !== 'complete') {
         // Upcoming game — don't fetch PBP yet
         const away = game.away || {};
         const home = game.home || {};
-        updatePBPHeader(game);
+        updatePBPHeader(game, null, summaryData);
         feed.innerHTML = `<div class="pbp-empty">
       <div style="font-weight:700;margin-bottom:6px">game not started</div>
       <div style="font-size:12px;color:var(--muted)">
@@ -1496,6 +2240,7 @@
       // Already have data
       if (state.pbp[gameId]) {
         renderPBP(gameId, state.pbp[gameId]);
+        updatePBPHeader(game, state.pbp[gameId], summaryData);
         return;
       }
 
@@ -1515,15 +2260,22 @@
     // ============================================================
     // PBP RENDERING
     // ============================================================
-    function updatePBPHeader(game, pbpData) {
+    function updatePBPHeader(game, pbpData, summaryData) {
       if (!game) return;
-      const away = game.away || pbpData?.away || {};
-      const home = game.home || pbpData?.home || {};
+      const summary = summaryData || state.summary[game.id] || {};
+      const away = summary.away || game.away || pbpData?.away || {};
+      const home = summary.home || game.home || pbpData?.home || {};
       const awayInfo = teamInfo(away.alias || away.abbr || '');
       const homeInfo = teamInfo(home.alias || home.abbr || '');
 
-      document.getElementById('pbp-away-alias').textContent = away.alias || away.abbr || '—';
-      document.getElementById('pbp-home-alias').textContent = home.alias || home.abbr || '—';
+      const awayAlias = away.alias || away.abbr || '—';
+      const homeAlias = home.alias || home.abbr || '—';
+      document.getElementById('pbp-away-alias').textContent = awayAlias;
+      document.getElementById('pbp-home-alias').textContent = homeAlias;
+      setHeaderLogo('pbp-away-logo', awayAlias, away.name || awayInfo.full || awayAlias);
+      setHeaderLogo('pbp-home-logo', homeAlias, home.name || homeInfo.full || homeAlias);
+      setTeamMeta('away', away);
+      setTeamMeta('home', home);
 
       const awayScore = pbpData?.away?.points ?? game.away?.points ?? null;
       const homeScore = pbpData?.home?.points ?? game.home?.points ?? null;
@@ -1542,6 +2294,7 @@
       const periodEl = document.getElementById('pbp-period');
       const clockEl = document.getElementById('pbp-clock-display');
       const statusEl = document.getElementById('pbp-status-label');
+      statusEl.style.color = 'var(--muted)';
 
       if (isLive(status)) {
         periodEl.textContent = periodLabel(quarter);
@@ -1555,13 +2308,14 @@
       } else if (status.toLowerCase() === 'closed' || status.toLowerCase() === 'complete') {
         periodEl.textContent = 'final';
         clockEl.textContent = '';
-        statusEl.textContent = 'final';
-        statusEl.style.color = 'var(--muted)';
+        statusEl.textContent = '';
       } else {
         periodEl.textContent = game.scheduled ? gameLocalTime(game.scheduled) : '—';
         clockEl.textContent = '';
         statusEl.textContent = '';
       }
+
+      ensureSummaryPolling(game.id, status);
     }
 
     function playEventType(event) {
@@ -1704,17 +2458,22 @@
       state.viewDate = d;
       state.games = [];
       state.pbp = {};
+      state.summary = {};
       state.knownEventIds = {};
 
       // Stop all pollers
       Object.values(state.pollers).forEach(t => clearTimeout(t));
       state.pollers = {};
+      clearSummaryPoller();
+      const statsPanel = document.getElementById('stats-panel');
+      if (statsPanel) statsPanel.innerHTML = '<div class="stats-empty">select a game to view team context and player stats</div>';
 
       loadSchedule();
     }
 
     document.getElementById('prev-day').addEventListener('click', () => changeDate(-1));
     document.getElementById('next-day').addEventListener('click', () => changeDate(1));
+    document.getElementById('menu-toggle').addEventListener('click', toggleGamesMenu);
 
     // ============================================================
     // CLOCK
@@ -1735,6 +2494,7 @@
     // ============================================================
     // INIT
     // ============================================================
+    setGamesMenuVisibility(true);
     loadSchedule();
   </script>
 </body>

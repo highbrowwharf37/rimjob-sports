@@ -96,6 +96,12 @@ This writes fresh data to `data/data.json`. In dev mode, the app reads from `/da
 - Date navigation (prev/next day)
 - All 30 NBA team colors
 
+Optional: prefetch local team logos for faster loads and offline-friendly behavior:
+
+```bash
+./scripts/fetch-data/fetch_nba_logos.sh
+```
+
 ## Data Sources
 
 - **Team stats**: [Barttorvik](https://barttorvik.com) — adjusted offensive/defensive efficiency, tempo, Barthag, WAB
