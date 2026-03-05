@@ -5,11 +5,6 @@ from collections import defaultdict
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-
-# ==============================
-# Create Stable Session
-# ==============================
-
 def create_session():
     session = requests.Session()
     retries = Retry(
@@ -29,11 +24,6 @@ HEADERS = {
     "Origin": "https://www.nba.com",
     "Accept": "application/json, text/plain, */*"
 }
-
-
-# ==============================
-# Fantasy Points
-# ==============================
 
 def get_league_leaders(session, statcategory, season):
     url = "https://stats.nba.com/stats/leagueLeaders"
@@ -102,11 +92,6 @@ def build_fantasy_dict(data):
         }
     return result
 
-
-# ==============================
-# Big Games
-# ==============================
-
 def fetch_league_gamelog(session, season):
     url = "https://stats.nba.com/stats/leaguegamelog"
     params = {
@@ -154,11 +139,6 @@ def process_games(data):
             players[name]["TD"] += 1
 
     return players
-
-
-# ==============================
-# Save Combined CSV
-# ==============================
 
 def save_combined_csv(fantasy_dict, big_games_dict, season):
     all_players = set(fantasy_dict.keys()) | set(big_games_dict.keys())
@@ -208,11 +188,6 @@ def save_combined_csv(fantasy_dict, big_games_dict, season):
 
     print(f"Combined stats saved to {filename}")
 
-
-# ==============================
-# MAIN
-# ==============================
-
 def main():
     year = int(input("Enter season end year (e.g. 2025 for 2024-25): "))
     season = f"{year - 1}-{str(year)[-2:]}"
@@ -235,3 +210,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
