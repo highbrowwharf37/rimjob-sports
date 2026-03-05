@@ -172,6 +172,11 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
 /* UPSET */
 .upset-level-high { color: var(--accent); font-weight: 700; }
 .upset-level-med { color: var(--amber); font-weight: 700; }
+
+/* DRAFT BOARD */
+.draft-gen-btn { padding: 12px 28px; background: var(--accent); color: white; border: none; border-radius: 4px; font-family: var(--font-sans); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.4px; transition: background 0.15s; }
+.draft-gen-btn:hover { background: #a93226; }
+.draft-gen-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -220,7 +225,7 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
 
 <!-- EFFICIENCY -->
 <div class="section" id="efficiency">
-  <div class="page-title"><div><h1>Offensive & Defensive Efficiency</h1><p>Points per 100 possessions, adjusted for opponent strength</p></div></div>
+  <div class="page-title"><div><h1>Offensive &amp; Defensive Efficiency</h1><p>Points per 100 possessions, adjusted for opponent strength</p></div></div>
   <div class="stat-grid" id="eff-cards"></div>
   <div class="filters">
     <label>Conference</label>
@@ -338,70 +343,155 @@ th .th-tip { font-size: 10px; font-weight: 400; color: var(--text-muted); displa
   <p class="data-note">Cinderella Score = composite of AdjEM vs seed gap, defensive efficiency rank, barthag, tempo control, WAB, and Strength of Losses. Higher = more upset potential.</p>
 </div>
 
-<!-- DRAFT BOARD -->
+<!-- DRAFT BOARD — AI POWERED -->
 <div class="section" id="draftboard">
   <div class="page-title">
     <div><h1>🏀 2026 NBA Draft Board</h1>
-    <p>Top prospects ranked by draft position · Includes team fit analysis · Updated March 2026</p></div>
+    <p>AI-powered big board — top prospects with team fit analysis, generated on demand</p></div>
   </div>
   <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--text-secondary);line-height:1.8">
-    <strong style="color:var(--text-primary)">About this board:</strong> The 2026 NBA Draft is widely considered one of the deepest in years. The top three — <strong>AJ Dybantsa</strong>, <strong>Darryn Peterson</strong>, and <strong>Cameron Boozer</strong> — are all legitimate No. 1 pick candidates with franchise-altering upside. Team assignments are based on current lottery projections and team needs as of March 2026.
+    <strong style="color:var(--text-primary)">How this works:</strong> Click <strong>Generate Draft Board</strong> and Claude AI will analyze the latest 2026 NBA Draft class to produce a live big board with team fit analysis. Regenerate anytime for fresh analysis reflecting the most current rankings.
   </div>
-  <div class="filters">
-    <label>Filter</label>
-    <select id="draft-pos-filter" onchange="renderDraftBoard()">
-      <option value="">All Positions</option>
-      <option value="PG">Point Guard</option>
-      <option value="SG">Shooting Guard</option>
-      <option value="SF">Small Forward</option>
-      <option value="PF">Power Forward</option>
-      <option value="C">Center</option>
-    </select>
-    <label>Round</label>
-    <select id="draft-round-filter" onchange="renderDraftBoard()">
-      <option value="">All Picks</option>
-      <option value="lottery">Lottery (1-14)</option>
-      <option value="first">Full 1st Round</option>
-    </select>
+  <div style="display:flex;gap:14px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+    <button class="draft-gen-btn" id="draft-gen-btn" onclick="generateDraftBoard()">✨ Generate Draft Board</button>
+    <div class="filters" style="margin:0">
+      <label>Show</label>
+      <select id="draft-count">
+        <option value="15">Top 15 (Lottery)</option>
+        <option value="30" selected>Top 30 (1st Round)</option>
+        <option value="50">Top 50</option>
+      </select>
+      <label>Position</label>
+      <select id="draft-pos-filter">
+        <option value="">All Positions</option>
+        <option value="PG">Point Guard</option>
+        <option value="SG">Shooting Guard</option>
+        <option value="SF">Small Forward</option>
+        <option value="PF">Power Forward</option>
+        <option value="C">Center</option>
+      </select>
+    </div>
+    <span id="draft-timestamp" style="font-size:11px;color:var(--text-muted);font-style:italic"></span>
   </div>
-  <div id="draftboard-container"></div>
-  <p class="data-note">Sources: ESPN, CBS Sports, Bleacher Report, Babcock Hoops · Team needs based on current standings · March 2026</p>
+  <div id="draftboard-container">
+    <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center;color:var(--text-muted)">
+      <div style="font-size:48px;margin-bottom:14px">🏀</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">Click "Generate Draft Board" to load the latest big board</div>
+      <div style="font-size:13px">Claude AI will produce an up-to-date ranking with team fits for up to 50 prospects</div>
+    </div>
+  </div>
+  <p class="data-note">Powered by Claude AI · Rankings reflect latest draft information · Regenerate anytime for fresh analysis</p>
 </div>
 
 </main>
 
 <script>
-// ===== DRAFT BOARD DATA =====
-const draftProspects = [
-  { pick:1, name:"AJ Dybantsa", school:"BYU", pos:"SF", yr:"Fr", age:18, ht:'6\'9"', wt:"215", wingspan:'6\'11"', ppg:24.9, rpg:7.1, apg:4.0, fg:53.3, tsp:58.1, team:"Washington Wizards", teamNeed:"Star wing scorer to build around", nbaComp:"Paul George / Jimmy Butler", analysis:"Dybantsa is the most physically imposing wing in this class. Washington desperately needs a franchise cornerstone after missing on Flagg — Dybantsa's elite scoring (25 PPG), improving 3PT shot, and defensive versatility make him the perfect fit. His downhill attack and size at the 3 give the Wizards the star they've been missing.", tier:"Franchise", tierColor:"var(--accent)" },
-  { pick:2, name:"Darryn Peterson", school:"Kansas", pos:"PG/SG", yr:"Fr", age:18, ht:'6\'5"', wt:"205", wingspan:'6\'10.5"', ppg:19.7, rpg:3.5, apg:3.0, fg:48.2, tsp:60.1, team:"Indiana Pacers", teamNeed:"Elite shot-creating guard", nbaComp:"Devin Booker / Paul George", analysis:"Peterson is a three-level scorer with elite athleticism and defensive upside. Indiana needs a guard who can create his own shot alongside Tyrese Haliburton. Peterson's quick release, pull-up 3PT ability, and 6'10\" wingspan make him a perfect complement.", tier:"Franchise", tierColor:"var(--accent)" },
-  { pick:3, name:"Cameron Boozer", school:"Duke", pos:"PF/C", yr:"Fr", age:18, ht:'6\'9"', wt:"240", wingspan:'7\'0"', ppg:22.7, rpg:10.3, apg:4.3, fg:58.3, tsp:64.2, team:"Atlanta Hawks", teamNeed:"Frontcourt anchor and offensive hub", nbaComp:"Bam Adebayo / Karl-Anthony Towns", analysis:"The most polished prospect in the class. Atlanta needs a frontcourt centerpiece after years of rebuilding — Boozer's 58% FG, 40% 3PT, elite rebounding and playmaking at 6'9\" is exactly what contenders are built around.", tier:"Franchise", tierColor:"var(--accent)" },
-  { pick:4, name:"Nate Ament", school:"Tennessee", pos:"SF/PF", yr:"Fr", age:18, ht:'6\'8"', wt:"210", wingspan:'7\'1"', ppg:16.2, rpg:7.8, apg:3.2, fg:51.4, tsp:60.8, team:"Charlotte Hornets", teamNeed:"Versatile two-way wing", nbaComp:"Scottie Barnes / OG Anunoby", analysis:"Ament is a do-everything wing with elite length and defensive versatility. Charlotte needs two-way impact players to build around LaMelo Ball.", tier:"Star", tierColor:"var(--blue)" },
-  { pick:5, name:"Caleb Wilson", school:"Utah", pos:"SF/PF", yr:"Fr", age:18, ht:'6\'8"', wt:"205", wingspan:'7\'0"', ppg:18.4, rpg:8.2, apg:4.1, fg:52.1, tsp:61.2, team:"New Orleans Pelicans", teamNeed:"Athletic wing scorer", nbaComp:"Jaren Jackson Jr. / Jonathan Kuminga", analysis:"Wilson has been one of the most explosive performers of the season. His athleticism is elite, and his improving shot-making and post-up efficiency show he's more than just a dunker.", tier:"Star", tierColor:"var(--blue)" },
-  { pick:6, name:"Kingston Flemings", school:"Florida", pos:"PG", yr:"Fr", age:18, ht:'6\'4"', wt:"190", wingspan:'6\'8"', ppg:15.8, rpg:3.4, apg:6.2, fg:46.2, tsp:58.4, team:"Utah Jazz", teamNeed:"Point guard of the future", nbaComp:"Tyrese Haliburton / Ja Morant", analysis:"Flemings is the best pure point guard not named Peterson in this class. Utah needs a lead guard to pair with Ace Bailey.", tier:"Star", tierColor:"var(--blue)" },
-  { pick:7, name:"Mikel Brown Jr.", school:"Georgia", pos:"SG/SF", yr:"Fr", age:18, ht:'6\'6"', wt:"200", wingspan:'6\'10"', ppg:17.2, rpg:5.1, apg:2.8, fg:49.8, tsp:59.2, team:"Sacramento Kings", teamNeed:"Athletic wing with upside", nbaComp:"Anthony Edwards / Zach LaVine", analysis:"Brown is a high-ceiling scorer with elite athleticism and shot-making ability.", tier:"Star", tierColor:"var(--blue)" },
-  { pick:8, name:"Darius Acuff", school:"Arkansas", pos:"PG/SG", yr:"Fr", age:18, ht:'6\'4"', wt:"185", wingspan:'6\'7"', ppg:19.1, rpg:3.8, apg:5.4, fg:47.6, tsp:57.8, team:"San Antonio Spurs", teamNeed:"Young guard to develop alongside Wemby", nbaComp:"Dejounte Murray / Immanuel Quickley", analysis:"Acuff is an explosive guard with elite scoring instincts and improving playmaking.", tier:"Star", tierColor:"var(--blue)" },
-  { pick:9, name:"Keaton Wagler", school:"Iowa St.", pos:"SF", yr:"Fr", age:18, ht:'6\'7"', wt:"210", wingspan:'6\'11"', ppg:14.8, rpg:6.2, apg:2.4, fg:50.2, tsp:61.8, team:"Oklahoma City Thunder", teamNeed:"Developmental wing with shooting", nbaComp:"Jalen Williams / Josh Giddey", analysis:"Wagler is a highly efficient wing with elite shot-making and defensive instincts.", tier:"Starter", tierColor:"var(--green)" },
-  { pick:10, name:"Yaxel Lendeborg", school:"UAB/Michigan", pos:"PF/C", yr:"Jr", age:21, ht:'6\'9"', wt:"225", wingspan:'7\'3"', ppg:16.4, rpg:10.8, apg:3.2, fg:54.8, tsp:62.1, team:"Toronto Raptors", teamNeed:"Versatile big with passing ability", nbaComp:"Draymond Green / Pascal Siakam", analysis:"Lendeborg is a proven winner with elite versatility and passing for a big man.", tier:"Starter", tierColor:"var(--green)" },
-  { pick:11, name:"Hannes Steinbach", school:"Tennessee", pos:"C/PF", yr:"Fr", age:19, ht:'6\'11"', wt:"235", wingspan:'7\'2"', ppg:15.2, rpg:8.4, apg:2.1, fg:56.2, tsp:63.4, team:"Portland Trail Blazers", teamNeed:"Skilled center who can shoot", nbaComp:"Nikola Vucevic / Brook Lopez", analysis:"Steinbach has outstanding hands and instincts inside, plus enough perimeter shooting to keep defenses honest.", tier:"Starter", tierColor:"var(--green)" },
-  { pick:12, name:"Tre Johnson", school:"Texas", pos:"SG", yr:"Fr", age:18, ht:'6\'5"', wt:"190", wingspan:'6\'8"', ppg:21.4, rpg:3.8, apg:2.4, fg:46.8, tsp:59.4, team:"Memphis Grizzlies", teamNeed:"Scoring guard off the bench", nbaComp:"Jordan Clarkson / Tyler Herro", analysis:"Johnson is one of the most prolific scorers in this class — 21 PPG at Texas as a freshman is impressive.", tier:"Starter", tierColor:"var(--green)" },
-  { pick:13, name:"Khaman Maluach", school:"Duke", pos:"C", yr:"Fr", age:19, ht:'7\'2"', wt:"250", wingspan:'7\'6"', ppg:11.8, rpg:7.2, apg:1.2, fg:62.4, tsp:68.2, team:"Detroit Pistons", teamNeed:"Rim-running center with upside", nbaComp:"Clint Capela / Mitchell Robinson", analysis:"Maluach is a monster athlete with elite shot-blocking and rim-running ability.", tier:"Starter", tierColor:"var(--green)" },
-  { pick:14, name:"Jeremiah Fears", school:"Oklahoma", pos:"PG", yr:"Fr", age:18, ht:'6\'3"', wt:"180", wingspan:'6\'7"', ppg:17.6, rpg:3.2, apg:5.8, fg:44.8, tsp:56.2, team:"Philadelphia 76ers", teamNeed:"Young guard with upside", nbaComp:"Trae Young / Tyrese Maxey", analysis:"Fears is a dynamic playmaker with elite vision and scoring instincts.", tier:"Starter", tierColor:"var(--green)" },
-];
+// ===== AI DRAFT BOARD =====
+async function generateDraftBoard() {
+  const btn = document.getElementById('draft-gen-btn');
+  const count = document.getElementById('draft-count').value;
+  const pos = document.getElementById('draft-pos-filter').value;
 
-function renderDraftBoard() {
-  const posFilter = document.getElementById('draft-pos-filter')?.value || '';
-  const roundFilter = document.getElementById('draft-round-filter')?.value || '';
-  let prospects = [...draftProspects];
-  if (posFilter) prospects = prospects.filter(p => p.pos.includes(posFilter));
-  if (roundFilter === 'lottery') prospects = prospects.filter(p => p.pick <= 14);
-  if (roundFilter === 'first') prospects = prospects.filter(p => p.pick <= 30);
-  const html = prospects.map(p => `
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+
+  document.getElementById('draftboard-container').innerHTML = `
+    <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center">
+      <div class="spinner" style="margin:0 auto 16px"></div>
+      <div style="font-size:14px;font-weight:600;color:var(--text-secondary)">Claude is analyzing the latest 2026 draft class...</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px">Generating ${count} prospects — takes about 15–20 seconds</div>
+    </div>`;
+
+  const posFilter = pos ? `Only include players who primarily play ${pos}.` : '';
+
+  const prompt = `You are an expert NBA draft analyst with deep knowledge of the 2026 NBA Draft class. Generate the top ${count} prospects for the 2026 NBA Draft as of March 2026. ${posFilter}
+
+Return ONLY a raw JSON array — no markdown, no explanation, no code fences. Start directly with [ and end with ].
+
+Each object must have exactly these fields:
+{
+  "pick": 1,
+  "name": "Full Name",
+  "school": "School Name",
+  "pos": "SF",
+  "yr": "Fr",
+  "age": 18,
+  "ht": "6'9\\"",
+  "wt": "215",
+  "wingspan": "6'11\\"",
+  "ppg": 18.4,
+  "rpg": 7.2,
+  "apg": 3.1,
+  "fg": 52.3,
+  "tsp": 61.2,
+  "team": "NBA Team Name",
+  "teamNeed": "One sentence on what the team needs",
+  "nbaComp": "Player A / Player B",
+  "analysis": "2-3 sentences on why this player fits this team",
+  "tier": "Franchise",
+  "tierColor": "var(--accent)"
+}
+
+Tier + tierColor rules — follow exactly:
+- Picks 1-5: tier="Franchise" tierColor="var(--accent)"
+- Picks 6-14: tier="Star" tierColor="var(--blue)"
+- Picks 15-30: tier="Starter" tierColor="var(--green)"
+- Picks 31-50: tier="Depth" tierColor="var(--text-muted)"
+
+Use real accurate 2025-26 season stats. The class includes AJ Dybantsa (BYU), Darryn Peterson (Kansas), Cameron Boozer (Duke), and many other top prospects. Assign realistic NBA teams based on 2025-26 standings (worst records get top picks). Return ONLY the JSON array, nothing else.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 12000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const text = data.content.map(i => i.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const prospects = JSON.parse(clean);
+
+    renderDraftBoard(prospects, pos);
+
+    const ts = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    document.getElementById('draft-timestamp').textContent = `Generated ${ts} · ${prospects.length} prospects`;
+
+  } catch(err) {
+    document.getElementById('draftboard-container').innerHTML =
+      `<div class="error-box">⚠️ <strong>Could not generate draft board.</strong> Please try again in a moment.<br><small>${err.message}</small></div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✨ Regenerate Draft Board';
+}
+
+// Cached prospects so position filter re-renders without re-calling API
+let cachedProspects = [];
+
+function renderDraftBoard(prospects, posFilter) {
+  if (prospects) cachedProspects = prospects;
+  const pos = posFilter !== undefined ? posFilter : (document.getElementById('draft-pos-filter')?.value || '');
+  const filtered = pos ? cachedProspects.filter(p => p.pos && p.pos.includes(pos)) : cachedProspects;
+
+  if (!filtered.length) {
+    document.getElementById('draftboard-container').innerHTML = '<div class="loading-bar">No prospects match your filters.</div>';
+    return;
+  }
+
+  const html = filtered.map(p => `
     <div style="background:white;border:1px solid var(--border);border-radius:6px;margin-bottom:12px;overflow:hidden">
       <div style="display:grid;grid-template-columns:60px 1fr auto;align-items:stretch">
         <div style="background:${p.tierColor};display:flex;align-items:center;justify-content:center;flex-direction:column;padding:16px 8px;min-width:60px">
           <div style="font-size:10px;color:rgba(255,255,255,0.8);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Pick</div>
           <div style="font-size:28px;font-weight:900;color:white;font-family:var(--font-serif);line-height:1">${p.pick}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-top:3px;font-weight:600;text-align:center">${p.tier}</div>
         </div>
         <div style="padding:14px 16px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
@@ -411,7 +501,14 @@ function renderDraftBoard() {
             <span style="font-size:11px;color:var(--text-muted)">${p.ht} · ${p.wt} lbs · Age ${p.age}</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px">
-            ${[['PPG',p.ppg.toFixed(1)],['RPG',p.rpg.toFixed(1)],['APG',p.apg.toFixed(1)],['FG%',p.fg+'%'],['TS%',p.tsp+'%'],['Wingspan',p.wingspan]].map(([l,v])=>`
+            ${[
+              ['PPG', typeof p.ppg === 'number' ? p.ppg.toFixed(1) : p.ppg],
+              ['RPG', typeof p.rpg === 'number' ? p.rpg.toFixed(1) : p.rpg],
+              ['APG', typeof p.apg === 'number' ? p.apg.toFixed(1) : p.apg],
+              ['FG%', p.fg + '%'],
+              ['TS%', p.tsp + '%'],
+              ['Wingspan', p.wingspan || '—']
+            ].map(([l, v]) => `
               <div style="background:var(--bg);border-radius:3px;padding:6px 8px;text-align:center">
                 <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);font-weight:700">${l}</div>
                 <div style="font-weight:700;font-size:13px;margin-top:2px">${v}</div>
@@ -428,7 +525,8 @@ function renderDraftBoard() {
         </div>
       </div>
     </div>`).join('');
-  document.getElementById('draftboard-container').innerHTML = html || '<div class="loading-bar">No prospects match your filters.</div>';
+
+  document.getElementById('draftboard-container').innerHTML = html;
 }
 
 // ===== DATA =====
@@ -516,21 +614,6 @@ function parsePlayers(raw) {
 }
 
 // ===== STRENGTH OF LOSSES =====
-/**
- * Compute Strength of Losses for each team.
- *
- * Since the raw data doesn't include a game log, we derive SOL using a 
- * proxy that's strongly correlated with actual loss quality:
- *
- *   SOL = (oppO * 0.5) + (oppD_inverted * 0.3) + (sos * 0.2)
- *   where oppD_inverted = max(oppD) - oppD (so lower defensive opp = better)
- *
- * Then we normalize this across all teams to a 0–100 scale,
- * and penalize teams whose actual win% is much worse than their barthag suggests
- * (i.e. bad losses drag their score down).
- *
- * The result is a 0–100 "SOL Score" and a label (Elite/Good/Average/Poor).
- */
 function computeSOL(teams) {
   if (!teams.length) return teams;
 
@@ -542,31 +625,20 @@ function computeSOL(teams) {
   const minSos  = Math.min(...teams.map(t => t.sos));
 
   return teams.map(t => {
-    // Normalise each component to 0–1
     const nOppO = maxOppO > minOppO ? (t.oppO - minOppO) / (maxOppO - minOppO) : 0.5;
-    // For oppD: lower is better opposition defense (harder schedule), so invert
     const nOppD = maxOppD > minOppD ? 1 - (t.oppD - minOppD) / (maxOppD - minOppD) : 0.5;
     const nSos  = maxSos  > minSos  ? (t.sos  - minSos)  / (maxSos  - minSos)  : 0.5;
-
-    // Composite raw SOL (0–1)
     const rawSOL = nOppO * 0.5 + nOppD * 0.3 + nSos * 0.2;
-
-    // Penalty: if team is underperforming their barthag (i.e. losing games they
-    // "should" win), it signals bad losses, not just hard ones.
     const totalG = t.w + t.l;
     const actualWP = totalG > 0 ? t.w / totalG : 0;
-    const gap = actualWP - t.barthag; // negative = underperforming
-    // gap of -0.15 knocks up to 20 points off
+    const gap = actualWP - t.barthag;
     const penalty = Math.max(0, Math.min(0.2, -gap * 1.3));
-
     const solScore = Math.max(0, Math.min(100, (rawSOL - penalty) * 100));
-
     let solLabel, solClass;
     if (solScore >= 72)      { solLabel = 'Elite';   solClass = 'sol-elite'; }
     else if (solScore >= 55) { solLabel = 'Good';    solClass = 'sol-good';  }
     else if (solScore >= 38) { solLabel = 'Average'; solClass = 'sol-avg';   }
     else                     { solLabel = 'Poor';    solClass = 'sol-poor';  }
-
     return { ...t, solScore, solLabel, solClass };
   });
 }
@@ -581,7 +653,7 @@ function solBadge(t) { return `<span class="sol-badge ${t.solClass}">${t.solLabe
 function renderAll() {
   renderPower(); renderEfficiency();
   renderSOS(); renderBubble(); renderMomentum();
-  renderUpset(); renderConfStrength(); renderCinderella(); renderDraftBoard();
+  renderUpset(); renderConfStrength(); renderCinderella();
 }
 
 // ===== POWER =====
@@ -695,16 +767,6 @@ function renderSOS() {
 }
 
 // ===== PREDICTOR =====
-/**
- * SOL Tiebreaker logic:
- * If the raw win probability spread is within 12 percentage points (e.g. 56% vs 44%),
- * we consider it a "close matchup" and apply a SOL adjustment.
- *
- * SOL adjustment = (solScore_A - solScore_B) * 0.06
- * This shifts the win probability by up to ±6% in tight games.
- *
- * If the adjustment flips the favourite, the SOL tiebreaker is highlighted.
- */
 function runPredictor() {
   const nameA = document.getElementById('pred-a').value;
   const nameB = document.getElementById('pred-b').value;
@@ -712,43 +774,30 @@ function runPredictor() {
     document.getElementById('pred-result').innerHTML = '<div class="error-box">Please select two different teams.</div>';
     return;
   }
-  const rawA = allTeams.find(t=>t.name===nameA);
-  const rawB = allTeams.find(t=>t.name===nameB);
-  if (!rawA || !rawB) return;
-
-  // Compute SOL for both teams (need the full dataset for normalisation)
   const teamsWithSOL = computeSOL(allTeams);
   const a = teamsWithSOL.find(t=>t.name===nameA);
   const b = teamsWithSOL.find(t=>t.name===nameB);
+  if (!a || !b) return;
 
-  // Base win probability (log5 formula)
   const pA = a.barthag, pB = b.barthag;
   const baseWinA = (pA - pA*pB) / (pA + pB - 2*pA*pB);
   const baseWinB = 1 - baseWinA;
-
   const spread = Math.abs(baseWinA - baseWinB);
   const isClose = spread < 0.12;
-
-  // SOL adjustment (only applied in close games)
-  const solDiff = (a.solScore - b.solScore) / 100; // -1 to +1
+  const solDiff = (a.solScore - b.solScore) / 100;
   const solAdj = isClose ? solDiff * 0.06 : 0;
   let adjWinA = Math.max(0.02, Math.min(0.98, baseWinA + solAdj));
   let adjWinB = 1 - adjWinA;
-
   const baseAWins = baseWinA > baseWinB;
   const adjAWins  = adjWinA  > adjWinB;
   const solFlipped = baseAWins !== adjAWins;
-
   const pctA = (adjWinA * 100).toFixed(1);
   const pctB = (adjWinB * 100).toFixed(1);
   const aWins = adjAWins;
-
-  // Projected score
   const avgPoss = (a.adjT + b.adjT) / 2;
   const scoreA = ((a.adjOE / 100) * (b.adjDE / 100) * avgPoss).toFixed(1);
   const scoreB = ((b.adjOE / 100) * (a.adjDE / 100) * avgPoss).toFixed(1);
 
-  // Tiebreaker callout
   let tiebreakerHTML = '';
   if (isClose) {
     if (solFlipped) {
@@ -793,10 +842,7 @@ function runPredictor() {
           <div style="margin-top:6px">${solBadge(b)}</div>
         </div>
       </div>
-
       ${tiebreakerHTML}
-
-      <!-- Win probability bar -->
       <div style="margin-bottom:20px">
         <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px">
           <span style="color:var(--blue)">${a.name}</span>
@@ -810,8 +856,6 @@ function runPredictor() {
           <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:white;font-size:12px;font-weight:700">${pctB}%</span>
         </div>
       </div>
-
-      <!-- Projected score -->
       <div style="text-align:center;background:var(--bg);border-radius:6px;padding:14px;margin-bottom:20px">
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);font-weight:700;margin-bottom:8px">Projected Score</div>
         <div style="font-family:var(--font-serif);font-size:32px;font-weight:600;letter-spacing:-1px">
@@ -821,8 +865,6 @@ function runPredictor() {
         </div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Based on avg tempo of ${avgPoss.toFixed(1)} possessions</div>
       </div>
-
-      <!-- Stat comparison bars incl SOL -->
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);margin-bottom:12px">Head-to-Head Stat Comparison</div>
       ${[
         {label:'Adj Offense',         av:a.adjOE,       bv:b.adjOE,       higherBetter:true,  fmt:v=>v.toFixed(1)},
@@ -853,8 +895,6 @@ function runPredictor() {
           </div>
         </div>`;
       }).join('')}
-
-      <!-- Records -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
         <div style="background:var(--blue-light);border-radius:4px;padding:10px 14px;text-align:center">
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.4px;color:var(--blue);font-weight:700;margin-bottom:3px">${a.name} Record</div>
@@ -871,16 +911,13 @@ function runPredictor() {
 // ===== BUBBLE =====
 function renderBubble() {
   const teamsWithSOL = computeSOL([...allTeams]);
-  // SOL-adjusted WAB: teams with elite losses get a +0.3 bonus, poor losses get -0.3
   const adjusted = teamsWithSOL.map(t => {
-    const solAdj = ((t.solScore - 50) / 100) * 0.6; // ±0.3
+    const solAdj = ((t.solScore - 50) / 100) * 0.6;
     return { ...t, adjWAB: t.wab + solAdj };
   }).sort((a,b) => b.adjWAB - a.adjWAB);
-
   const inTourney  = adjusted.filter(t => t.adjWAB >= 2.0).slice(0,20);
   const onBubble   = adjusted.filter(t => t.adjWAB >= -1.0 && t.adjWAB < 2.0).slice(0,16);
   const outTourney = adjusted.filter(t => t.adjWAB < -1.0).slice(0,16);
-
   const makeList = (teams) => teams.map(t => `
     <div class="bubble-row">
       <div>
@@ -890,21 +927,11 @@ function renderBubble() {
       </div>
       <div class="bubble-wab">${t.record} · WAB ${t.adjWAB>=0?'+':''}${t.adjWAB.toFixed(1)} <span style="font-size:10px;color:var(--text-muted)">(adj)</span></div>
     </div>`).join('');
-
   document.getElementById('bubble-container').innerHTML = `
     <div class="bubble-cols">
-      <div>
-        <div class="bubble-col-head bubble-in-head">✓ In the Tournament (${inTourney.length})</div>
-        <div class="bubble-list">${makeList(inTourney)}</div>
-      </div>
-      <div>
-        <div class="bubble-col-head bubble-edge-head">⚠ On the Bubble (${onBubble.length})</div>
-        <div class="bubble-list">${makeList(onBubble)}</div>
-      </div>
-      <div>
-        <div class="bubble-col-head bubble-out-head">✗ On the Outside (${outTourney.length})</div>
-        <div class="bubble-list">${makeList(outTourney)}</div>
-      </div>
+      <div><div class="bubble-col-head bubble-in-head">✓ In the Tournament (${inTourney.length})</div><div class="bubble-list">${makeList(inTourney)}</div></div>
+      <div><div class="bubble-col-head bubble-edge-head">⚠ On the Bubble (${onBubble.length})</div><div class="bubble-list">${makeList(onBubble)}</div></div>
+      <div><div class="bubble-col-head bubble-out-head">✗ On the Outside (${outTourney.length})</div><div class="bubble-list">${makeList(outTourney)}</div></div>
     </div>`;
 }
 
@@ -912,20 +939,16 @@ function renderBubble() {
 function renderMomentum() {
   let teams = computeSOL([...filteredTeams('mom-conf')]);
   const dir = document.getElementById('mom-dir')?.value || '';
-
   teams = teams.map(t => {
     const totalGames = t.w + t.l;
     const actualWinPct = totalGames > 0 ? t.w / totalGames : 0;
     const momentum = (actualWinPct - t.barthag) * 100;
-    // SOL-adjusted momentum: good losses should reduce the harshness of a bad record
-    const solMomAdj = ((t.solScore - 50) / 100) * 3; // ±1.5 pts
+    const solMomAdj = ((t.solScore - 50) / 100) * 3;
     const adjMomentum = momentum + solMomAdj;
     return {...t, momentum, adjMomentum};
   }).sort((a,b) => b.adjMomentum - a.adjMomentum);
-
   if (dir === 'up')   teams = teams.filter(t => t.adjMomentum > 2);
   if (dir === 'down') teams = teams.filter(t => t.adjMomentum < -2);
-
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Rk</th><th>Team</th><th>Conf</th>
@@ -934,20 +957,18 @@ function renderMomentum() {
       <th class="num has-tip" data-tip="Strength of Losses — adjusts momentum for loss quality">SOL</th>
       <th class="num">Record</th><th class="num">Barthag</th>
     </tr></thead><tbody>`;
-
   teams.forEach((t,i) => {
     const arrow = t.adjMomentum > 3 ? '▲' : t.adjMomentum < -3 ? '▼' : '—';
     const arrowClass = t.adjMomentum > 3 ? 'momentum-arrow-up' : t.adjMomentum < -3 ? 'momentum-arrow-down' : 'momentum-arrow-flat';
     const totalG = t.w + t.l;
     const actualWP = totalG > 0 ? ((t.w/totalG)*100).toFixed(1) : '0.0';
-    const expWP = (t.barthag*100).toFixed(1);
     html += `<tr>
       <td class="rank-cell ${i<5?'top5':''}">${i+1}</td>
       <td class="team-cell">${t.name}</td>
       <td><span class="pill pill-blue">${t.conf}</span></td>
       <td class="num"><span class="${arrowClass}">${arrow} ${t.adjMomentum>=0?'+':''}${t.adjMomentum.toFixed(1)}%</span></td>
       <td class="num">${actualWP}%</td>
-      <td class="num">${expWP}%</td>
+      <td class="num">${(t.barthag*100).toFixed(1)}%</td>
       <td class="num">${solBadge(t)}</td>
       <td class="num">${t.record}</td>
       <td class="num">${(t.barthag*100).toFixed(1)}%</td>
@@ -968,7 +989,6 @@ function renderH2H() {
   const a = teamsWithSOL.find(t=>t.name===nameA);
   const b = teamsWithSOL.find(t=>t.name===nameB);
   if (!a || !b) return;
-
   const metrics = [
     {label:'Adj Offense',        av:a.adjOE,         bv:b.adjOE,         higherBetter:true,  isSOL:false},
     {label:'Adj Defense',        av:a.adjDE,         bv:b.adjDE,         higherBetter:false, isSOL:false},
@@ -979,7 +999,6 @@ function renderH2H() {
     {label:'SOS',                av:a.sos,           bv:b.sos,           higherBetter:true,  isSOL:false},
     {label:'Strength of Losses', av:a.solScore,      bv:b.solScore,      higherBetter:true,  isSOL:true},
   ];
-
   const rows = metrics.map(m => {
     const maxV = Math.max(Math.abs(m.av), Math.abs(m.bv), 1);
     const pA2 = Math.min(100, (Math.abs(m.av) / maxV) * 100);
@@ -995,14 +1014,12 @@ function renderH2H() {
       <span class="h2h-val-right" style="color:${bWins?'var(--accent)':'var(--text-primary)'}">${typeof m.bv==='number'?m.bv.toFixed(1):m.bv}${m.isSOL?'/100':''}</span>
     </div>`;
   }).join('');
-
   const pA2 = a.barthag, pB2 = b.barthag;
   const winA = (pA2 - pA2*pB2) / (pA2 + pB2 - 2*pA2*pB2);
   const spread = Math.abs(winA - (1-winA));
   const isClose = spread < 0.12;
   const solAdj = isClose ? ((a.solScore - b.solScore) / 100) * 0.06 : 0;
   const adjWinA = Math.max(0.02, Math.min(0.98, winA + solAdj));
-
   document.getElementById('h2h-container').innerHTML = `
     <div class="result-card">
       <div class="h2h-header">
@@ -1031,7 +1048,6 @@ function renderUpset() {
     const pU = underdog.barthag;
     const pF = randOpp.barthag;
     const upsetProb = (pU - pU*pF) / (pU + pF - 2*pU*pF);
-    // SOL boost: underdog with elite losses gets up to +3% upset probability
     const solBoost = ((underdog.solScore - 50) / 100) * 0.03;
     const adjUpsetProb = Math.min(0.55, upsetProb + solBoost);
     if (adjUpsetProb > 0.30 && adjUpsetProb < 0.55) {
@@ -1039,12 +1055,10 @@ function renderUpset() {
     }
   }
   upsets.sort((a,b) => b.adjUpsetProb - a.adjUpsetProb);
-
   if (!upsets.length) {
     document.getElementById('upset-container').innerHTML = '<div class="loading-bar">No significant upset opportunities found.</div>';
     return;
   }
-
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Underdog</th><th>vs Favorite</th>
@@ -1056,7 +1070,6 @@ function renderUpset() {
       <th class="num">Underdog Record</th>
       <th class="num">Alert Level</th>
     </tr></thead><tbody>`;
-
   upsets.slice(0,25).forEach(({underdog, favorite, upsetProb, adjUpsetProb, solBoost}) => {
     const level = adjUpsetProb > 0.42 ? 'HIGH' : adjUpsetProb > 0.36 ? 'MEDIUM' : 'LOW';
     const levelClass = level === 'HIGH' ? 'upset-level-high' : level === 'MEDIUM' ? 'upset-level-med' : '';
@@ -1092,10 +1105,7 @@ function renderConfStrength() {
     const topTeam = [...teams].sort((a,b)=>b.barthag-a.barthag)[0];
     return {conf, teams: teams.length, avgBarthag, avgEM, avgSOL, topTeam};
   }).sort((a,b) => b.avgBarthag - a.avgBarthag);
-
   const maxB = confs[0].avgBarthag;
-  const [maxSOL, minSOL] = [Math.max(...confs.map(c=>c.avgSOL)), Math.min(...confs.map(c=>c.avgSOL))];
-
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th class="sorted">Rk</th><th>Conference</th><th class="num">Teams</th>
@@ -1105,7 +1115,6 @@ function renderConfStrength() {
       <th>Best Team</th>
       <th class="num">Best Barthag</th>
     </tr></thead><tbody>`;
-
   confs.forEach((c,i) => {
     const p = pct(c.avgBarthag, confs[confs.length-1].avgBarthag, maxB);
     const solLabel = c.avgSOL >= 65 ? 'Elite' : c.avgSOL >= 52 ? 'Good' : c.avgSOL >= 38 ? 'Avg' : 'Poor';
@@ -1130,15 +1139,12 @@ function renderCinderella() {
   const teamsWithSOL = computeSOL([...allTeams]);
   const byBarthag = [...teamsWithSOL].sort((a,b) => b.barthag - a.barthag);
   const totalTeams = byBarthag.length;
-
   const teamsWithRank = byBarthag.map((t, i) => {
     const trueRank = i + 1;
     const projSeed = Math.min(16, Math.ceil(trueRank / 4));
     return {...t, trueRank, projSeed};
   });
-
   const defRanks = [...teamsWithSOL].sort((a,b) => a.adjDE - b.adjDE);
-
   const candidates = teamsWithRank
     .filter(t => t.projSeed >= minSeed && t.trueRank <= 80)
     .map(t => {
@@ -1148,7 +1154,6 @@ function renderCinderella() {
       const tempoScore     = Math.max(0, 15 - Math.abs(t.adjT - 69) * 0.8);
       const wabScore       = Math.min(15, Math.max(0, t.wab * 2 + 5));
       const seedGapScore   = Math.min(15, (t.projSeed - 1) * t.barthag * 10);
-      // SOL contributes up to 15 points — elite loss quality = proven ability to compete
       const solScore2      = Math.min(15, (t.solScore / 100) * 15);
       const cinderellaScore = defScore + barthagScore + tempoScore + wabScore + seedGapScore + solScore2;
       const kenpomEst = (t.adjOE - t.adjDE).toFixed(1);
@@ -1156,12 +1161,10 @@ function renderCinderella() {
     })
     .sort((a,b) => b.cinderellaScore - a.cinderellaScore)
     .slice(0, 20);
-
   if (!candidates.length) {
     document.getElementById('cinderella-container').innerHTML = '<div class="loading-bar">No candidates found for selected seed range.</div>';
     return;
   }
-
   const top = candidates[0];
   const bestDef = [...candidates].sort((a,b) => a.adjDE - b.adjDE)[0];
   const bestWAB = [...candidates].sort((a,b) => b.wab - a.wab)[0];
@@ -1171,10 +1174,8 @@ function renderCinderella() {
     <div class="stat-card"><div class="stat-card-label">Best Defense</div><div class="stat-card-value" style="color:var(--blue);font-size:18px">${bestDef.name}</div><div class="stat-card-sub">Adj DE: ${bestDef.adjDE.toFixed(1)} · Rank #${bestDef.defRank}</div></div>
     <div class="stat-card"><div class="stat-card-label">Most Battle-Tested</div><div class="stat-card-value" style="color:var(--green);font-size:18px">${bestWAB.name}</div><div class="stat-card-sub">WAB: +${bestWAB.wab.toFixed(1)}</div></div>
     <div class="stat-card"><div class="stat-card-label">Best Loss Quality</div><div class="stat-card-value" style="color:var(--purple);font-size:18px">${bestSOL.name}</div><div class="stat-card-sub">SOL ${bestSOL.solScore.toFixed(0)}/100 — ${bestSOL.solLabel}</div></div>`;
-
   const maxScore = candidates[0].cinderellaScore;
   const minScore = candidates[candidates.length-1].cinderellaScore;
-
   let html = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Rk</th><th>Team</th><th>Conf</th>
@@ -1190,7 +1191,6 @@ function renderCinderella() {
       <th class="num">Record</th>
       <th class="num">Verdict</th>
     </tr></thead><tbody>`;
-
   candidates.forEach((t, i) => {
     const scorePct = pct(t.cinderellaScore, minScore, maxScore);
     const verdict = i === 0 ? '🥿 #1 Pick' : i < 3 ? '⭐ Elite' : i < 7 ? '🔥 Strong' : i < 12 ? '👀 Watch' : '💡 Sleeper';
@@ -1211,7 +1211,6 @@ function renderCinderella() {
       <td class="num">${verdict}</td>
     </tr>`;
   });
-
   document.getElementById('cinderella-container').innerHTML = html + '</tbody></table></div>';
 }
 
