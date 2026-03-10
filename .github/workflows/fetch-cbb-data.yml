@@ -80,8 +80,14 @@ jobs:
               };
               fs.writeFileSync(path.join(dataDir, 'ap_poll.json'), JSON.stringify(out, null, 2));
               console.log('AP Poll: wrote ' + out.rankings.length + ' teams');
+            } else {
+              fs.writeFileSync(path.join(dataDir, 'ap_poll.json'), JSON.stringify({ updated: new Date().toISOString(), rankings: [] }, null, 2));
+              console.log('AP Poll: no data, wrote empty file');
             }
-          } catch(e) { console.error('AP Poll error:', e.message); }
+          } catch(e) {
+            fs.writeFileSync(path.join(dataDir, 'ap_poll.json'), JSON.stringify({ updated: new Date().toISOString(), rankings: [] }, null, 2));
+            console.error('AP Poll error:', e.message);
+          }
 
           try {
             const gamesDir = path.join(outDir, 'games', '2026');
@@ -105,7 +111,10 @@ jobs:
             }));
             fs.writeFileSync(path.join(dataDir, 'scores.json'), JSON.stringify({ updated: new Date().toISOString(), games }, null, 2));
             console.log('Scores: wrote ' + games.length + ' games');
-          } catch(e) { console.error('Scores error:', e.message); }
+          } catch(e) {
+            fs.writeFileSync(path.join(dataDir, 'scores.json'), JSON.stringify({ updated: new Date().toISOString(), games: [] }, null, 2));
+            console.error('Scores error:', e.message);
+          }
 
           try {
             const linesDir = path.join(outDir, 'lines', '2026');
@@ -135,7 +144,10 @@ jobs:
             }));
             fs.writeFileSync(path.join(dataDir, 'lines.json'), JSON.stringify({ updated: new Date().toISOString(), lines }, null, 2));
             console.log('Lines: wrote ' + lines.length + ' lines');
-          } catch(e) { console.error('Lines error:', e.message); }
+          } catch(e) {
+            fs.writeFileSync(path.join(dataDir, 'lines.json'), JSON.stringify({ updated: new Date().toISOString(), lines: [] }, null, 2));
+            console.error('Lines error:', e.message);
+          }
           JSEOF
 
       - name: Commit and push
@@ -143,6 +155,6 @@ jobs:
           cd data-repo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ap_poll.json scores.json lines.json
+          git add -A
           git diff --staged --quiet || git commit -m "chore: update cbb data $(date -u +%Y-%m-%d)"
           git push
