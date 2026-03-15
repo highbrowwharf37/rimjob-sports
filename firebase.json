@@ -1,1 +1,2 @@
-{"hosting":{"site":"rimjob-sports","public":".","ignore":["firebase.json","**/.*","merge.py","README.md"],"rewrites":[{"source":"/cbb/analytics","destination":"/cbb-rankings.html"},{"source":"/cbb/analytics.html","destination":"/cbb-rankings.html"}],"cleanUrls":true}}
+{"hosting":{"site":"rimjob-sports","public":".","ignore":["firebase.json","**/.*","merge.py","README.md"],"rewrites":[{"source":"/cbb/analytics","destination":"/cbb-rankings.html"},{"source":"/cbb/analytics.html","destination":"/cbb-rankings.html"},{"source": "/nfl/analytics",
+  "destination": "/2026_draft_comps.html"} ],"cleanUrls":true}}
