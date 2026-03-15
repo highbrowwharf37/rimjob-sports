@@ -64,6 +64,9 @@ def is_eligible(row: dict, week: str) -> bool:
     average = parse_float(row["AVG"])
     week_value = parse_float(row[week])
 
+    if week_value is None:
+        return False
+
     meets_average_rule = (
         average is not None
         and games_played >= rules["min_games"]
