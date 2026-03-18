@@ -1,6 +1,6 @@
 import { formatNumber } from '../utils/dataLoader';
 
-export default function DataTable({ data, includeAllSeasonColumn = false }) {
+export default function DataTable({ data, includeAllSeasonColumn = false, startIndex = 0 }) {
   return (
     <div className="table-wrap">
       <table>
@@ -22,9 +22,12 @@ export default function DataTable({ data, includeAllSeasonColumn = false }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((player, idx) => (
-            <tr key={`${player.player}-${player.season}-${idx}`} className={idx < 10 ? 'highlight-row' : ''}>
-              <td className={`num rank-cell ${idx < 5 ? 'top5' : ''}`}>{idx + 1}</td>
+          {data.map((player, idx) => {
+            const rowNumber = startIndex + idx + 1;
+
+            return (
+            <tr key={`${player.player}-${player.season}-${idx}`} className={rowNumber <= 10 ? 'highlight-row' : ''}>
+              <td className={`num rank-cell ${rowNumber <= 5 ? 'top5' : ''}`}>{rowNumber}</td>
               <td className="player-cell">
                 {player.player}
                 {includeAllSeasonColumn && <span className="season-tag">{player.season}</span>}
@@ -43,7 +46,7 @@ export default function DataTable({ data, includeAllSeasonColumn = false }) {
                 {formatNumber(player.fpg, 2)}
               </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     </div>

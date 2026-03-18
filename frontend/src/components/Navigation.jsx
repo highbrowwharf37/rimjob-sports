@@ -1,8 +1,8 @@
 export default function Navigation({ activeTab, onTabChange }) {
   const tabs = ['alltime', 'byseason'];
   const labels = {
-    alltime: 'All Time Leaders',
-    byseason: 'By Season'
+    alltime: 'All Time Leaders 🏀',
+    byseason: 'By Season 🏀',
   };
 
   return (

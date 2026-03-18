@@ -91,7 +91,7 @@ export default function AllTimeLeaders({ data, loading, error }) {
         <span className="last-updated">Updated Daily</span>
       </div>
 
-      <DataTable data={displayData} includeAllSeasonColumn={true} />
+      <DataTable data={displayData} includeAllSeasonColumn={true} startIndex={startIdx} />
 
       <Pagination
         currentPage={currentPage}

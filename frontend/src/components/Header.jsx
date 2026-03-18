@@ -3,7 +3,7 @@ export default function Header() {
     <header>
       <div className="header-inner">
         <div className="logo">
-          NBA<span>Tracker</span>
+          Fantasy<span>Tracker</span>
         </div>
         <div className="header-meta">
           Fantasy Points & Player Stats

@@ -97,7 +97,7 @@ export default function BySeason({ seasons, seasonData, loading, error }) {
         <div className="loading-bar">Select a season to view data</div>
       ) : (
         <>
-          <DataTable data={displayData} includeAllSeasonColumn={false} />
+          <DataTable data={displayData} includeAllSeasonColumn={false} startIndex={startIdx} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
